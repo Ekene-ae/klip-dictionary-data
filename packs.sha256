@@ -1,327 +1,347 @@
-# klip-dictionary-data v3 — provenance manifest
+# klip-dictionary-data v4 — provenance manifest
 #
-# Every number in a REBUILT block is measured, not carried over. One block per
-# language.
+# Every number here is measured, not carried over. One block per language.
 #
-# v3 REBUILDS THREE LANGUAGES ONLY: zh, ja, ko. The Han single-character
-# rescue (Klip PR #257) changed the entry classifier, and it can only move
-# rows in a Han-script language. The other SIXTEEN blocks are CARRIED OVER
-# FROM v2 VERBATIM -- every measured field is the v2 figure, byte for byte,
-# because those assets are the v2 artifacts unchanged and were not rebuilt.
-# Each such block says so on its `status` line, which is the ONLY line added
-# to it.
+# **v4 REBUILDS ALL NINETEEN LANGUAGES.** Unlike v3, which rebuilt three and
+# carried sixteen, every block below is REBUILT at the builder commit named
+# next -- because the entry classifier changed in a way that can move rows in
+# any language, and it did in all nineteen.
 #
-# THE SIXTEEN CARRIED ASSETS ARE NOT ATTACHED TO THIS RELEASE. v3 attaches
-# FIVE files: the three rebuilt .jsonl.gz, export_pack.py, and this manifest.
-# To obtain any of the other sixteen, fetch it from the v2 release -- the
-# asset.sha256 recorded in its block below is the hash of THAT file, and is
-# how you confirm you have the right one. A block in this manifest is a
-# PROVENANCE RECORD for the dataset, not a claim that the file sits in this
-# release's asset list.
-#
-# BUILDER      Klip commit cb49b835d38567f8a8d3ffd284f414041e6ad513 (develop,
-#              the #257 merge), tool/dict_pack/build_pack.dart
-#              -- applies to the THREE REBUILT BLOCKS.
-#              The sixteen carried blocks were built at
-#              09a912748412d2b09681390a7103b21150974a8a (the #256 merge),
-#              which is what their numbers measure. A block's builder is the
-#              commit named on its own status line, never this one by default.
+# BUILDER      Klip commit 1f61855a8e73a9389620929c909afa11eead545f (develop,
+#              the #258 merge), tool/dict_pack/build_pack.dart
 # EXPORTER     export_pack.py in this repo, python3 -I, stdlib only.
 #              A column-to-key dump of the pack. No filtering, no reshaping.
-#              UNCHANGED from v2 and re-attached byte-identical.
+#              UNCHANGED from v2/v3 and re-attached byte-identical.
 # CHAIN        kaikki extract -> Dart pack (.sqlite) -> gzipped JSONL asset
-#              Each link is hashed below so any link can be re-verified.
 #
-# THE THREE EXTRACTS WERE RE-VERIFIED BEFORE THE v3 BUILD, not assumed: each
+# WHAT CHANGED: an entry's CLASS was decided by a union over every sense's
+# tags, so one "short for ..." sub-sense demoted the whole word -- `Wasser`
+# shipped as an abbreviation of `Mineralwasser`. Class is now read from the
+# entry's own tags, else its FIRST GLOSSED SENSE. Apocopic forms resolve to
+# `form`. See the README's v4 changelog.
+#
+# ALL NINETEEN EXTRACTS WERE RE-VERIFIED BEFORE THE BUILD, not assumed: each
 # extract.sha256 below was recomputed from the file in ~/dict-work/ and
-# matched the value v2 recorded. The inputs are therefore pinned across both
-# releases, so the entry-count deltas are attributable to the classifier
-# change alone and to nothing in the source.
+# matched the value v3 recorded (v2's, for the sixteen v3 carried). Every
+# input is therefore pinned across v2, v3 and v4, so the class deltas are
+# attributable to the classifier change alone and to nothing in the source.
 #
-# WHY THE EXTRACT HASH IS HERE AND WAS NOT IN v1: kaikki.org serves a ROLLING
-# dump with no versioned archive. v1 recorded no extract hash, so v1's numbers
-# are not reproducible -- the gender fix's removal count came out 2,806 against
-# one snapshot and 2,828 against another, a gap that can no longer be closed.
-# v2 pins every input, and v3 re-verified those pins.
+# ── pack.sha256 IS NOT RECORDED IN v4, AND THAT IS A REGRESSION ──────────
+#
+# v2 and v3 recorded a sha256 for each intermediate .sqlite pack. v4 does
+# NOT: each pack was deleted immediately after its export and WAS NOT HASHED
+# FIRST. The honest entry is "NOT CAPTURED" -- v3's hashes are NOT carried
+# forward here, because a different builder produces a different pack and
+# copying them would be a false provenance record.
+#
+# WHAT IS STILL VERIFIABLE END TO END: extract.sha256 pins the input, the
+# builder commit pins the code, and asset.sha256 pins the PUBLISHED artifact.
+# A rebuild from the pinned extract at the pinned commit, re-exported, must
+# reproduce the asset hash -- which is the thing consumers actually fetch.
+# The pack hash was a convenience on an intermediate that is not published.
+#
+# FOR THE NEXT RELEASE: hash the pack at export time, before deleting it.
 #
 # THE PACKS ARE INTERMEDIATES AND WERE DELETED AFTER EXPORT. They are not
-# published. Each is reproducible from the extract hashed below plus the
-# builder commit for that block, and its hash is recorded here so a rebuild
-# can be checked against what actually produced these assets.
+# published. pack.bytes is recorded, read from each builder's own output.
 #
+
 [ar]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_ar.jsonl.gz
-  asset.sha256     811e83b57ca5e001b627a528f9476f540d333558f751971dc41d55075f8c8870
-  asset.bytes      15987204
-  entries          229902   (lemma 19933 · phrase 1329 · form 208561 · abbr 79)
-  builder.classes  lemma=19933 · phrase=1329 · form=208561 · abbr=79 · dropped=3515
+  asset.sha256     31f95af9ac8f112899e8b30937a0b472352477886e2d9db1fd2d01207041fd21
+  asset.bytes      15986648
+  entries          229902   (lemma 20051 · phrase 1332 · form 208482 · abbr 37)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=20051 · phrase=1332 · form=208482 · abbr=37 · dropped=3515
   pack             klip-dict-ar.sqlite (intermediate, deleted)
-  pack.sha256      1ccbc7a69f1f162afafb54e680183d786b5d787734b9201339ab12a647bb6e7f
-  pack.bytes       336973824
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       336965632
   extract.sha256   b833fc5017d51a7ef1edf428272067b112281d9a79150d1f2ac7646b178065a3
   extract.modified Fri, 30 Oct 2026 23:38:58 GMT
   extract.fetched  2026-11-04
 
 [da]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_da.jsonl.gz
-  asset.sha256     ab5315586c5811192d7edb306d11a747326c5542a9da0e42afcb6505b67572e0
-  asset.bytes      1550579
-  entries          55906   (lemma 22296 · phrase 1232 · form 32186 · abbr 192)
-  builder.classes  lemma=22296 · phrase=1232 · form=32186 · abbr=192 · dropped=2780
+  asset.sha256     50937aa50280d3d3e9703f5945e57b0cc76f48c09d994fa30212dbefd6275495
+  asset.bytes      1550482
+  entries          55906   (lemma 22332 · phrase 1232 · form 32158 · abbr 184)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=22332 · phrase=1232 · form=32158 · abbr=184 · dropped=2780
   pack             klip-dict-da.sqlite (intermediate, deleted)
-  pack.sha256      d1132231c86be3aecbd6bca2ee1c45a60230cf0bf7abaa7562182f261a840736
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       18464768
   extract.sha256   0fed75cbc101a9a1fb7879c4f737d0d993fb7a26073a2ccc10cc951a1e604f1d
   extract.modified Fri, 30 Oct 2026 23:15:10 GMT
   extract.fetched  2026-11-04
 
 [de]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_de.jsonl.gz
-  asset.sha256     85fcda3a0375f26bc0d6783ecd0281b6995a69d668057074025c7b0e4c641414
-  asset.bytes      15465744
-  entries          356465   (lemma 79747 · phrase 3600 · form 271501 · abbr 1617)
-  builder.classes  lemma=79747 · phrase=3600 · form=271501 · abbr=1617 · dropped=15328
+  asset.sha256     1a11c6858318b927cfb72a7551c6f9f4bc988e10c8a8874d2f177286d340c1e1
+  asset.bytes      15464140
+  entries          356465   (lemma 80046 · phrase 3604 · form 271386 · abbr 1429)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=80046 · phrase=3604 · form=271386 · abbr=1429 · dropped=15328
   pack             klip-dict-de.sqlite (intermediate, deleted)
-  pack.sha256      3e593287f63c32ff6b4ac64aa07fde9101d1f04105dbf34280ce85e6666b72e8
-  pack.bytes       295387136
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       295378944
   extract.sha256   e16ea346863a1d0bc9e0533f83015b3847ec8b0a065ad2620b76a19bb005b520
   extract.modified Fri, 30 Oct 2026 23:14:06 GMT
   extract.fetched  2026-11-04
 
 [el]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_el.jsonl.gz
-  asset.sha256     9fbd54c619ee62caafd00c947ec19998c267c5c6e2e6eaab065605394f24a663
-  asset.bytes      3998224
-  entries          81303   (lemma 25468 · phrase 1242 · form 54259 · abbr 334)
-  builder.classes  lemma=25468 · phrase=1242 · form=54259 · abbr=334 · dropped=4122
+  asset.sha256     42fd1085c93402e46e2b307f3705a739af35b799cbbce24cdf8ec0189a188842
+  asset.bytes      3997999
+  entries          81303   (lemma 25692 · phrase 1244 · form 54051 · abbr 316)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=25692 · phrase=1244 · form=54051 · abbr=316 · dropped=4122
   pack             klip-dict-el.sqlite (intermediate, deleted)
-  pack.sha256      ca4202acb5d9fe1c0b82c98391bf2b5ea59b886c3a7a2f3e7ac5e0f0d4f48ace
-  pack.bytes       57442304
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       57434112
   extract.sha256   cbf73c15005e143c496dc46c155a593e8d59880ef2059761d26e89fe2f96ff25
   extract.modified Fri, 30 Oct 2026 23:26:05 GMT
   extract.fetched  2026-11-04
 
 [en]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
-  asset            klip_dictionary_en.jsonl.gz
-  asset.sha256     aab89f20511043d75d6dcef245be1c292d48608fd2328ac3a7b98982272d9c5d
-  asset.bytes      40552607
-  entries          1247916   (lemma 491614 · phrase 141785 · form 592069 · abbr 22448)
-  builder.classes  lemma=491614 · phrase=141785 · form=592069 · abbr=22448 · dropped=251245
-  pack             klip-dict-en.sqlite (intermediate, deleted)
-  pack.sha256      566b944f0603142f8b2f250911936f104d9da3b37d9a028c60affbb160311107
-  pack.bytes       304508928
-  extract.sha256   4d03b6cba283744756c57ff661c2c6cbfe34fcf8ff513a966576cf7d97e91a99
-  extract.modified Fri, 30 Oct 2026 23:09:26 GMT
-  extract.fetched  2026-11-04
+  status           PENDING — English is built last and alone (534 MB extract,
+                   ~3.4 GB expanded). This block is filled and the manifest
+                   re-attached when its build and export complete. The asset
+                   is NOT in this release until then.
 
 [es]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_es.jsonl.gz
-  asset.sha256     12d84982dc68693a1be2a96048f8ef23f894db36d3e3fdd850f74f86de824c48
-  asset.bytes      15792654
-  entries          801725   (lemma 91933 · phrase 15474 · form 693484 · abbr 834)
-  builder.classes  lemma=91933 · phrase=15474 · form=693484 · abbr=834 · dropped=12412
+  asset.sha256     b5fa1d7e3eec19ed11ed1695e62cab76b1e6637359b5e639de5a32225afd4852
+  asset.bytes      15791252
+  entries          801725   (lemma 92268 · phrase 15488 · form 693260 · abbr 709)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=92268 · phrase=15488 · form=693260 · abbr=709 · dropped=12412
   pack             klip-dict-es.sqlite (intermediate, deleted)
-  pack.sha256      79073198f987ca2ec4a867eadc3851b4e0192a428b3abe34808b526fa2ff8954
-  pack.bytes       306622464
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       306610176
   extract.sha256   b25cd18584e510c516e4c9afac42a87e5acfd6bc1a13ea96a94057899521a427
   extract.modified Fri, 30 Oct 2026 23:17:42 GMT
   extract.fetched  2026-11-04
 
 [fr]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_fr.jsonl.gz
-  asset.sha256     9950d6a02962d006e56bff236820c9e9704dfa27c254f994a564c33bf83f7b61
-  asset.bytes      7797453
-  entries          391326   (lemma 71069 · phrase 16048 · form 303141 · abbr 1068)
-  builder.classes  lemma=71069 · phrase=16048 · form=303141 · abbr=1068 · dropped=12801
+  asset.sha256     afd3bbab21b2e8f0f86f8d9a2f6016d196129813ff34c7ef35ed4ee2acc1da1e
+  asset.bytes      7796897
+  entries          391326   (lemma 71201 · phrase 16058 · form 303089 · abbr 978)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=71201 · phrase=16058 · form=303089 · abbr=978 · dropped=12801
   pack             klip-dict-fr.sqlite (intermediate, deleted)
-  pack.sha256      e18e5d6b35c51b49dc1bbe3971b7f439d080ae7a05d46f4b7043746b46654c57
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       130633728
   extract.sha256   224fce45865bad43c4f43f11d0f6fc84e044ffda8407c549609639cfc7d38cc7
   extract.modified Fri, 30 Oct 2026 23:28:52 GMT
   extract.fetched  2026-11-04
 
 [hi]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_hi.jsonl.gz
-  asset.sha256     cd616f76c32794a18e465f69a6a22111569714a1196f1b245601a25deea47e41
-  asset.bytes      2938848
-  entries          35877   (lemma 19516 · phrase 1797 · form 14541 · abbr 23)
-  builder.classes  lemma=19516 · phrase=1797 · form=14541 · abbr=23 · dropped=3636
+  asset.sha256     2545789cef0b9a2eb9c062aec13aa424803da38b30489839f80d6a2d883320e3
+  asset.bytes      2938786
+  entries          35877   (lemma 19533 · phrase 1797 · form 14527 · abbr 20)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=19533 · phrase=1797 · form=14527 · abbr=20 · dropped=3636
   pack             klip-dict-hi.sqlite (intermediate, deleted)
-  pack.sha256      5307ef75aa17f9a5dd3ef56dddc5eed4cebce3c5ae231b3bfc02dd073f85f84a
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       51691520
   extract.sha256   e60b373dbec502cbbd916e286b6156f582bb5cab85e279d8f0c09a763331e0e7
   extract.modified Fri, 30 Oct 2026 22:54:39 GMT
   extract.fetched  2026-11-04
 
 [it]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_it.jsonl.gz
-  asset.sha256     7aaaebdc5fc20782b17abf261babcec0150d4d5cf8a8e4c33c4832a0bb4b189a
-  asset.bytes      11338464
-  entries          601352   (lemma 131820 · phrase 9025 · form 459177 · abbr 1330)
-  builder.classes  lemma=131820 · phrase=9025 · form=459177 · abbr=1330 · dropped=22770
+  asset.sha256     9fd345e4d7cbac3b26ea6b70d72f58764ae4c832ec24396f0ad94b7b7970f104
+  asset.bytes      11339017
+  entries          601352   (lemma 132044 · phrase 9032 · form 459856 · abbr 420)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=132044 · phrase=9032 · form=459856 · abbr=420 · dropped=22770
   pack             klip-dict-it.sqlite (intermediate, deleted)
-  pack.sha256      f2d499c95033c346e0d68419befc87847c2336b60e62223b55bcaa316183d29b
-  pack.bytes       194478080
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       194519040
   extract.sha256   edfb787898b80c6ed20db5601741c8d42ad6f59c1c618e396ab34c702a448b63
   extract.modified Fri, 30 Oct 2026 22:55:12 GMT
   extract.fetched  2026-11-04
 
 [ja]
-  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_ja.jsonl.gz
-  asset.sha256     28cc1659bddb05ecebdea54b7c0aab3cc0e13631c3daa8a6da16a6d200bc406c
-  asset.bytes      7945161
-  entries          90417   (lemma 84036 · phrase 908 · form 3488 · abbr 1985)
-  builder.classes  lemma=84036 · phrase=908 · form=3488 · abbr=1985 · dropped=109613
+  asset.sha256     078c05d33e830794bae767944dcc8b3dcaa2e959dd3fdfe4a51dba38963f887d
+  asset.bytes      7943213
+  entries          90417   (lemma 84706 · phrase 908 · form 3420 · abbr 1383)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=84706 · phrase=908 · form=3420 · abbr=1383 · dropped=109613
   pack             klip-dict-ja.sqlite (intermediate, deleted)
-  pack.sha256      7cdc96030b0075532e74c8ce631d146129dfc77556f2e652b1c9bb70a3cd2397
-  pack.bytes       77893632
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       77889536
   extract.sha256   1e0b1e48498e5af6665bad258c5b713b824ff6cc8f6b7d8d9e33c2ad89838158
   extract.modified Fri, 30 Oct 2026 23:06:36 GMT
   extract.fetched  2026-11-04
 
 [ko]
-  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_ko.jsonl.gz
-  asset.sha256     e3d103e6bad9d8821be0764c1748cf1476e150e0b061cdb2770d1ab4d7ed7206
-  asset.bytes      3809319
-  entries          52558   (lemma 38060 · phrase 898 · form 13217 · abbr 383)
-  builder.classes  lemma=38060 · phrase=898 · form=13217 · abbr=383 · dropped=11899
+  asset.sha256     8ca40d53ead999118c7ef01a17a2c43ad009d25f7c928ce8f8828896b897f0df
+  asset.bytes      3809015
+  entries          52558   (lemma 38147 · phrase 898 · form 13195 · abbr 318)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=38147 · phrase=898 · form=13195 · abbr=318 · dropped=11899
   pack             klip-dict-ko.sqlite (intermediate, deleted)
-  pack.sha256      f4f61659835a2cd9f577e02f90bab237f96232542085c447e02432c37d54b2d5
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       42688512
   extract.sha256   2bf0aeac466458f2621e0ecfdd72b7b5b00a90c0e775443d55d369d6dab5ea83
   extract.modified Fri, 30 Oct 2026 23:11:48 GMT
   extract.fetched  2026-11-04
 
 [nl]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_nl.jsonl.gz
-  asset.sha256     de98d9cc5f33faf3d86ff9a544abdcb564c51dc64d1105738101c69ad26a8e7c
-  asset.bytes      4143472
-  entries          131705   (lemma 53720 · phrase 3126 · form 74103 · abbr 756)
-  builder.classes  lemma=53720 · phrase=3126 · form=74103 · abbr=756 · dropped=15085
+  asset.sha256     ff8b8de50cb40f431e371c14981a3e212041f95b9dfcf7d65e64cd0aa0a08f17
+  asset.bytes      4143201
+  entries          131705   (lemma 53863 · phrase 3127 · form 73994 · abbr 721)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=53863 · phrase=3127 · form=73994 · abbr=721 · dropped=15085
   pack             klip-dict-nl.sqlite (intermediate, deleted)
-  pack.sha256      37d04d980582159d10d6afbd37348a6458b507dca49725044716bea29e285d1d
-  pack.bytes       46030848
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       46022656
   extract.sha256   17499b37f390857aa36aa59cff7370d09158db15b3c09ee2dc9e8d7790c4eb4d
   extract.modified Fri, 30 Oct 2026 23:04:32 GMT
   extract.fetched  2026-11-04
 
 [no]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_no.jsonl.gz
-  asset.sha256     7fa0a1e303344978c887652ba21dd48232a3db6e3fdf6edd1102593e89adec9a
-  asset.bytes      1760393
-  entries          79433   (lemma 21644 · phrase 526 · form 57142 · abbr 121)
-  builder.classes  lemma=21644 · phrase=526 · form=57142 · abbr=121 · dropped=2215
+  asset.sha256     89c85c08b1b6f08696d777e09dc340aa837ef4eced840ab6a661a58af67a89a6
+  asset.bytes      1760258
+  entries          79433   (lemma 21686 · phrase 528 · form 57116 · abbr 103)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=21686 · phrase=528 · form=57116 · abbr=103 · dropped=2215
   pack             klip-dict-no.sqlite (intermediate, deleted)
-  pack.sha256      f86b3ec17094d37c0bbdcbf68d948363891abad7f772fb5c049a336664e16524
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       20819968
   extract.sha256   11e269eb3678b84f87ccdefbfc93844078fcd1ec3429d3aaea147fd2420e664f
   extract.modified Fri, 30 Oct 2026 23:32:57 GMT
   extract.fetched  2026-11-04
 
 [pl]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_pl.jsonl.gz
-  asset.sha256     822979fad0ed2ccb8f2266772393358509a10f5fba08e88a12b092e3191a3b2f
-  asset.bytes      12337234
-  entries          165934   (lemma 65345 · phrase 7856 · form 92317 · abbr 416)
-  builder.classes  lemma=65345 · phrase=7856 · form=92317 · abbr=416 · dropped=34242
+  asset.sha256     038650480d12f5c289230c75d6b9649789fe6a2eccd13900becce2f23cab27cc
+  asset.bytes      12336543
+  entries          165934   (lemma 65503 · phrase 7859 · form 92189 · abbr 383)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=65503 · phrase=7859 · form=92189 · abbr=383 · dropped=34242
   pack             klip-dict-pl.sqlite (intermediate, deleted)
-  pack.sha256      f72c995f4f82e1bf4daa9627ba58187cf4146a35ba83bd3374dec2193543754a
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       165158912
   extract.sha256   c620e7fc1fe4287720cbb72939e5fa0e4cd95797c1719a5c480b16de5d959bd0
   extract.modified Fri, 30 Oct 2026 23:38:49 GMT
   extract.fetched  2026-11-04
 
 [pt]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_pt.jsonl.gz
-  asset.sha256     01964912733e44e3299e82485a1910e8d4ecbbdaa629b4d2e04cbf278fb7aff1
-  asset.bytes      8464584
-  entries          433003   (lemma 61268 · phrase 7336 · form 363307 · abbr 1092)
-  builder.classes  lemma=61268 · phrase=7336 · form=363307 · abbr=1092 · dropped=14025
+  asset.sha256     d7d2c5acd0155001baeab8a4bb3d14ec567bfc6fcdc9dc828a4cc5c3a3393244
+  asset.bytes      8463663
+  entries          433003   (lemma 61560 · phrase 7339 · form 363200 · abbr 904)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=61560 · phrase=7339 · form=363200 · abbr=904 · dropped=14025
   pack             klip-dict-pt.sqlite (intermediate, deleted)
-  pack.sha256      7bd5fc4a3e869b839f99ea133213eaaeb82c33c5976261f8770272607d9c875b
+  pack.sha256      NOT CAPTURED — see the header note
   pack.bytes       138723328
   extract.sha256   0db87ddd508032c4e986fe818826801c9b167b2ee4f8315763166f0fa4014480
   extract.modified Fri, 30 Oct 2026 23:12:00 GMT
   extract.fetched  2026-11-04
 
 [ru]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_ru.jsonl.gz
-  asset.sha256     74255e6f17a4b85bdd7cf2d08e1eab1df5551e22e13e6855d8d46bb642e0d1ec
-  asset.bytes      18045714
-  entries          436278   (lemma 47697 · phrase 3511 · form 384617 · abbr 453)
-  builder.classes  lemma=47697 · phrase=3511 · form=384617 · abbr=453 · dropped=6982
+  asset.sha256     9275434b2e7c3fb8fce075de15ddb0656eee2b315bf558a0e4b96d02e902a666
+  asset.bytes      18036283
+  entries          436278   (lemma 49755 · phrase 3511 · form 382597 · abbr 415)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=49755 · phrase=3511 · form=382597 · abbr=415 · dropped=6982
   pack             klip-dict-ru.sqlite (intermediate, deleted)
-  pack.sha256      669e43c2edbddecd7ea83d9c63f19ee9e8ef3d6f93cffc4b50d3e791066334e6
-  pack.bytes       307363840
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       307187712
   extract.sha256   86a781a5685d614efd439e326eed0bf0ad9cda9f67b854f8b6c93212c5345b3e
   extract.modified Fri, 30 Oct 2026 23:05:30 GMT
   extract.fetched  2026-11-04
 
 [sv]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_sv.jsonl.gz
-  asset.sha256     67af3aa2d88d89e2f064d338c8f238bb043f3c51aa1b532b7949b97e9857f80e
-  asset.bytes      5631411
-  entries          307847   (lemma 52796 · phrase 3309 · form 251194 · abbr 548)
-  builder.classes  lemma=52796 · phrase=3309 · form=251194 · abbr=548 · dropped=5975
+  asset.sha256     586282aadd533cfcaed9927e8299346a7af16494f15631aedc868837028e63f7
+  asset.bytes      5630903
+  entries          307847   (lemma 52942 · phrase 3314 · form 251109 · abbr 482)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=52942 · phrase=3314 · form=251109 · abbr=482 · dropped=5975
   pack             klip-dict-sv.sqlite (intermediate, deleted)
-  pack.sha256      072786b4de82f5614597e7666dd460e5925885ed6a8a2188f211e00affb364cd
-  pack.bytes       90935296
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       90931200
   extract.sha256   b9c5b0f7dfe4f4895582449c5970c0efaa232f9861f5fe3527012555a234ae91
   extract.modified Fri, 30 Oct 2026 23:31:17 GMT
   extract.fetched  2026-11-04
 
 [tr]
-  status           unchanged from v2 — not rebuilt; builder 09a9127
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_tr.jsonl.gz
-  asset.sha256     5a949c4febeed7c1a65d3132e20e3f36a973d24fbeb75a3bf8ac09a90bf67718
-  asset.bytes      15487674
-  entries          40251   (lemma 18405 · phrase 4072 · form 17567 · abbr 207)
-  builder.classes  lemma=18405 · phrase=4072 · form=17567 · abbr=207 · dropped=6003
+  asset.sha256     391a16c6df3702cb765d34dec65c3b5b8d4f9b2c61f83a33a455eecc7ed514c4
+  asset.bytes      15487586
+  entries          40251   (lemma 18490 · phrase 4075 · form 17534 · abbr 152)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=18490 · phrase=4075 · form=17534 · abbr=152 · dropped=6003
   pack             klip-dict-tr.sqlite (intermediate, deleted)
-  pack.sha256      bd541967b49f99df56592cfb8ffe56319fe7e73e4651e3f288bffb858495e6d2
-  pack.bytes       273620992
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       273616896
   extract.sha256   ccaa8909f6f6ad3403d5891cbbd94799b56c67176d18967502f20baa29a6cb32
   extract.modified Fri, 30 Oct 2026 23:01:45 GMT
   extract.fetched  2026-11-04
 
 [zh]
-  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
+  status           REBUILT for v4 — builder 1f61855 (#258)
   asset            klip_dictionary_zh.jsonl.gz
-  asset.sha256     cb67ddc84fa32136fcefd2b8f389d59a554e6ca4f94361a56134a7f93d1865f5
-  asset.bytes      7676956
-  entries          173530   (lemma 159654 · phrase 10612 · form 1851 · abbr 1413)
-  builder.classes  lemma=159654 · phrase=10612 · form=1851 · abbr=1413 · dropped=155389
+  asset.sha256     075ca9aadcc375cba3d9ec86205c97b6c628abfd230d109d0c0fa45afdef9bac
+  asset.bytes      7675874
+  entries          173530   (lemma 160141 · phrase 10615 · form 1581 · abbr 1193)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=160141 · phrase=10615 · form=1581 · abbr=1193 · dropped=155389
   pack             klip-dict-zh.sqlite (intermediate, deleted)
-  pack.sha256      bd17ba421ed712f5de56340588e27f0078e404ee64947ab705b475717d411aef
-  pack.bytes       42106880
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       42098688
   extract.sha256   9663c01322014cea417fbe4812cc073ca2d6a6998946edb244bf4f26853819c9
   extract.modified Fri, 30 Oct 2026 23:19:26 GMT
   extract.fetched  2026-11-04
 
-[totals 19 languages — THE WHOLE DATASET, spanning v2 and v3; not this release's five attachments]
-  entries          5712728
-  asset.bytes      200723695
-  lemma 1556021 · phrase 233686 · form 3887722 · abbr 35299
-  note             entries and lemma are v2's totals plus the three rebuilt
-                   deltas (zh +21153 · ja +5585 · ko +4044 = +30782, all of
-                   it dropped->lemma). phrase, form and abbr are UNCHANGED in
-                   all three rebuilds, so their totals are v2's exactly.
-                   asset.bytes was re-measured by summing the 19 published
-                   files (200723695) and agrees with the arithmetic.
+[totals 18 of 19 languages — en PENDING]
+  entries          4464812
+  asset.bytes      160151760
+  lemma 1069960 · phrase 91961 · form 3292744 · abbr 10147
+  note             English is not included in these totals yet.

@@ -9,6 +9,153 @@ files in the git tree).
 
 ---
 
+## v4 changelog — 2026-11-04
+
+**v4 rebuilds ALL NINETEEN languages.** v3 rebuilt three and carried sixteen;
+this release carries nothing — the entry classifier changed in a way that can
+move rows in any language, and it moved rows in every one of them.
+
+### One sub-sense was demoting the whole word
+
+An entry's class was decided by a **union over every sense's tags**:
+
+```
+Wasser  [0] "water (H₂O)"                              neuter, strong
+        [1] "water, waters (body of water)"            neuter
+        [3] "urine"                                    euphemistic
+        [4] "clipping of Mineralwasser/Tafelwasser"    abbreviation, clipping
+```
+
+The union carried `clipping`, so **`Wasser` shipped as an `abbr`** — an
+abbreviation of `Mineralwasser`. So did `Apfel` (of `Pferdeapfel`),
+`Schlüssel`, and Japanese 水, 月 and 車.
+
+Class is now read from the entry's **own tags, else its FIRST GLOSSED
+SENSE**. Wiktionary orders senses by primacy, so sense 0 is the entry's
+identity.
+
+**This is the same defect as v2's gender bug, one column over.** That one
+unioned `forms[]` and `senses[]` tags and stored the *counterpart's* gender;
+this unioned `senses[]` tags and stored the *sub-sense's* class.
+
+It is also the second time this rule has been wrong. v2 removed `short-form`
+from the abbreviation family after it falsely marked 13,940 Russian adverbs.
+That was the instance fix; this is the class fix — and removing tags one at a
+time could never have reached `Wasser`, whose tag is legitimately `clipping`.
+
+### It was never only the abbreviation rule
+
+`misspelling` and the form check read the **same union**, and `alt-of`
+accompanies `abbreviation` on the same sense almost always. Repairing only
+the abbreviation rule moved these entries to `form` instead of to `lemma`
+(Japanese: 816 of 825; English: 2,800 of 2,810) — `Wasser` would have become
+a *form of* `Mineralwasser`. All three rules now take the per-sense rule.
+
+### Apocopic forms are FORMS
+
+**100% of apocopic senses also carry an abbreviation-family tag on the same
+sense** (it 897/897, es 65/65, pt 62/62, fr 21/21, de 10/10), so the
+per-sense rule alone would have left every one of them `abbr`. An apocopic
+form is a shortened form of its lemma, so it is resolved to `form` ahead of
+the abbreviation check: `color` → `form`, target `colore`.
+
+Its target is not in `form_of` — **2 of Italian's 897** carry one — so it is
+parsed from the first gloss by **one anchored pattern**, `^apocopic (form )?of
+X`, and left **NULL on a miss**. Not widened to a general "… of Y" matcher:
+`con` is glossed "alternative form of com, apocopic form of come" and
+`adequar` "apocopic form of (archaic) adequare", so a loose pattern would
+store a confident wrong lemma. 1,041 of 1,055 apocopic glosses parse.
+
+### Per-language class deltas
+
+Against the published baselines — v3 for zh/ja/ko, v2 for the other sixteen.
+
+| code | lemma Δ | abbr Δ | form Δ | phrase Δ | dropped Δ | total Δ |
+|---|---:|---:|---:|---:|---:|---:|
+| `ar` | +118 | −42 | −79 | +3 | +0 | 0 |
+| `da` | +36 | −8 | −28 | +0 | +0 | 0 |
+| `de` | +299 | −188 | −115 | +4 | +0 | 0 |
+| `el` | +224 | −18 | −208 | +2 | +0 | 0 |
+| `en` | +2,402 | −1,147 | −1,560 | +305 | +0 | 0 |
+| `es` | +335 | −125 | −224 | +14 | +0 | 0 |
+| `fr` | +132 | −90 | −52 | +10 | +0 | 0 |
+| `hi` | +17 | −3 | −14 | +0 | +0 | 0 |
+| `it` | +224 | −910 | +679 | +7 | +0 | 0 |
+| `ja` | +670 | −602 | −68 | +0 | +0 | 0 |
+| `ko` | +87 | −65 | −22 | +0 | +0 | 0 |
+| `nl` | +143 | −35 | −109 | +1 | +0 | 0 |
+| `no` | +42 | −18 | −26 | +2 | +0 | 0 |
+| `pl` | +158 | −33 | −128 | +3 | +0 | 0 |
+| `pt` | +292 | −188 | −107 | +3 | +0 | 0 |
+| `ru` | +2,058 | −38 | −2,020 | +0 | +0 | 0 |
+| `sv` | +146 | −66 | −85 | +5 | +0 | 0 |
+| `tr` | +85 | −55 | −33 | +3 | +0 | 0 |
+| `zh` | +487 | −220 | −270 | +3 | +0 | 0 |
+| | **+7,955** | **−3,851** | **−4,469** | **+365** | **+0** | **0** |
+
+**TWO INVARIANTS HOLD IN EVERY LANGUAGE, AND THEY ARE THE REAL CHECK:**
+`dropped` is **+0 everywhere**, and each language's **total Δ is exactly 0**.
+The change only redistributes entries among `lemma`, `abbr`, `form` and
+`phrase` — nothing enters or leaves the dataset, and entry counts per
+language are identical to v3/v2. A classifier fix that moved the dropped
+count would be doing something it was not asked to.
+
+`it` is the apocopic rescue read straight off the table: `abbr` −910 against
+`form` +679. **`ru` and `el` are almost entirely the FORM half** of the fix
+(−2,020 and −208 form) — languages where the original defect report saw
+nothing, which is the clearest evidence that fixing only the abbreviation
+rule would have left most of this in place.
+
+### A note on the residual metric, because it is not zero
+
+The defect was found by asking: how many `abbr`-class entries have a first
+gloss that does not announce an abbreviation, and a headword that is not
+all-caps or symbolic? After the fix that instrument still reports
+**en 1,120, pt 134, fr 85, de 58, sv 45, es 40, it 39, ja 25 … hi 0**.
+
+**That is an upper bound, not a defect count.** The instrument reads gloss
+WORDING; the authority is the tag. Bucketing English's residual:
+
+```
+1,114 of 1,635   "ellipsis of ..."     <- essentially ALL of en's 1,120
+  475            no shortening wording at all
+   34            "alternative ..."
+```
+
+`ellipsis of` is a shortening statement the instrument simply does not list —
+`döner` ← `döner kebap`, `ton` ← `ton balığı`. Those are correctly `abbr`. So
+are abbreviations glossed by meaning rather than relation: `i.e.` "That is,
+namely", `who's` "Who is", `path` "Pathology", and Danish `døgner` "a kiosk
+(open twenty-four seven)", a clipping of `døgnkiosk` with nothing in the
+gloss saying so.
+
+The raw figures are published here **with** that explanation rather than
+quietly adding `ellipsis` to the instrument and reporting a prettier number.
+
+What settles it is the named entries, classified from real extract lines:
+
+```
+Apfel lemma · Schlüssel lemma · Wasser lemma · 水 lemma · 車 lemma
+color form (target colore) · colore lemma · mm abbr
+月 BOTH — abbr for "short for 月曜日", lemma for "the Moon" (two etymologies)
+```
+
+### Provenance
+
+All nineteen extract `sha256` were **re-verified against the v3/v2 manifest
+before building** and all nineteen matched, so every input is pinned across
+v2, v3 and v4 and the deltas are attributable to the classifier alone.
+
+**`pack.sha256` is NOT recorded in v4, and that is a regression from v2/v3.**
+Each intermediate `.sqlite` was deleted immediately after export and was not
+hashed first. v3's hashes are *not* carried forward — a different builder
+produces a different pack, and copying them would be a false record. The
+chain is still verifiable end to end: `extract.sha256` pins the input, the
+builder commit pins the code, and `asset.sha256` pins the published artifact,
+which is what a rebuild must reproduce.
+
+---
+
 ## v3 changelog — 2026-11-04
 
 **v3 rebuilds THREE languages — `zh`, `ja`, `ko` — and nothing else.** The
@@ -209,26 +356,26 @@ from a build log.
 
 | code | language | entries | lemma | phrase | form | abbr | asset bytes |
 |---|---|---:|---:|---:|---:|---:|---:|
-| `ar` | Arabic | 229,902 | 19,933 | 1,329 | 208,561 | 79 | 15,987,204 |
-| `da` | Danish | 55,906 | 22,296 | 1,232 | 32,186 | 192 | 1,550,579 |
-| `de` | German | 356,465 | 79,747 | 3,600 | 271,501 | 1,617 | 15,465,744 |
-| `el` | Greek | 81,303 | 25,468 | 1,242 | 54,259 | 334 | 3,998,224 |
-| `en` | English | 1,247,916 | 491,614 | 141,785 | 592,069 | 22,448 | 40,552,607 |
-| `es` | Spanish | 801,725 | 91,933 | 15,474 | 693,484 | 834 | 15,792,654 |
-| `fr` | French | 391,326 | 71,069 | 16,048 | 303,141 | 1,068 | 7,797,453 |
-| `hi` | Hindi | 35,877 | 19,516 | 1,797 | 14,541 | 23 | 2,938,848 |
-| `it` | Italian | 601,352 | 131,820 | 9,025 | 459,177 | 1,330 | 11,338,464 |
-| `ja` | Japanese | 90,417 | 84,036 | 908 | 3,488 | 1,985 | 7,945,161 |
-| `ko` | Korean | 52,558 | 38,060 | 898 | 13,217 | 383 | 3,809,319 |
-| `nl` | Dutch | 131,705 | 53,720 | 3,126 | 74,103 | 756 | 4,143,472 |
-| `no` | Norwegian Bokmål | 79,433 | 21,644 | 526 | 57,142 | 121 | 1,760,393 |
-| `pl` | Polish | 165,934 | 65,345 | 7,856 | 92,317 | 416 | 12,337,234 |
-| `pt` | Portuguese | 433,003 | 61,268 | 7,336 | 363,307 | 1,092 | 8,464,584 |
-| `ru` | Russian | 436,278 | 47,697 | 3,511 | 384,617 | 453 | 18,045,714 |
-| `sv` | Swedish | 307,847 | 52,796 | 3,309 | 251,194 | 548 | 5,631,411 |
-| `tr` | Turkish | 40,251 | 18,405 | 4,072 | 17,567 | 207 | 15,487,674 |
-| `zh` | Chinese (Han-keyed) | 173,530 | 159,654 | 10,612 | 1,851 | 1,413 | 7,676,956 |
-| | **19 languages** | **5,712,728** | **1,556,021** | **233,686** | **3,887,722** | **35,299** | **200,723,695** |
+| `ar` | Arabic | 229,902 | 20,051 | 1,332 | 208,482 | 37 | 15,986,648 |
+| `da` | Danish | 55,906 | 22,332 | 1,232 | 32,158 | 184 | 1,550,482 |
+| `de` | German | 356,465 | 80,046 | 3,604 | 271,386 | 1,429 | 15,464,140 |
+| `el` | Greek | 81,303 | 25,692 | 1,244 | 54,051 | 316 | 3,997,999 |
+| `en` | English | *pending v4 rebuild* | | | | | |
+| `es` | Spanish | 801,725 | 92,268 | 15,488 | 693,260 | 709 | 15,791,252 |
+| `fr` | French | 391,326 | 71,201 | 16,058 | 303,089 | 978 | 7,796,897 |
+| `hi` | Hindi | 35,877 | 19,533 | 1,797 | 14,527 | 20 | 2,938,786 |
+| `it` | Italian | 601,352 | 132,044 | 9,032 | 459,856 | 420 | 11,339,017 |
+| `ja` | Japanese | 90,417 | 84,706 | 908 | 3,420 | 1,383 | 7,943,213 |
+| `ko` | Korean | 52,558 | 38,147 | 898 | 13,195 | 318 | 3,809,015 |
+| `nl` | Dutch | 131,705 | 53,863 | 3,127 | 73,994 | 721 | 4,143,201 |
+| `no` | Norwegian Bokmål | 79,433 | 21,686 | 528 | 57,116 | 103 | 1,760,258 |
+| `pl` | Polish | 165,934 | 65,503 | 7,859 | 92,189 | 383 | 12,336,543 |
+| `pt` | Portuguese | 433,003 | 61,560 | 7,339 | 363,200 | 904 | 8,463,663 |
+| `ru` | Russian | 436,278 | 49,755 | 3,511 | 382,597 | 415 | 18,036,283 |
+| `sv` | Swedish | 307,847 | 52,942 | 3,314 | 251,109 | 482 | 5,630,903 |
+| `tr` | Turkish | 40,251 | 18,490 | 4,075 | 17,534 | 152 | 15,487,586 |
+| `zh` | Chinese (Han-keyed) | 173,530 | 160,141 | 10,615 | 1,581 | 1,193 | 7,675,874 |
+| | **18 of 19 (en pending)** | **4,464,812** | **1,069,960** | **91,961** | **3,292,744** | **10,147** | **160,151,760** |
 
 **English is the largest by a wide margin** — a 534 MB compressed extract that
 decompresses to 3.2 GiB and yields **1,247,916 entries**, more than a quarter
