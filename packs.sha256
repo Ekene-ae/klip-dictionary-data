@@ -111,10 +111,20 @@
   extract.fetched  2026-11-04
 
 [en]
-  status           PENDING — English is built last and alone (534 MB extract,
-                   ~3.4 GB expanded). This block is filled and the manifest
-                   re-attached when its build and export complete. The asset
-                   is NOT in this release until then.
+  status           REBUILT for v4 — builder 1f61855 (#258)
+  asset            klip_dictionary_en.jsonl.gz
+  asset.sha256     ab03a7e610161ef978dcbce715ca797b0291333432f12f4f2b36e7a1f8676cf0
+  asset.bytes      40548330
+  entries          1247916   (lemma 494016 · phrase 142090 · form 590509 · abbr 21301)
+  self-check       export vs meta.entry_count: OK · builder line vs export
+                   line: AGREE
+  builder.classes  lemma=494016 · phrase=142090 · form=590509 · abbr=21301 · dropped=251245
+  pack             klip-dict-en.sqlite (intermediate, deleted)
+  pack.sha256      NOT CAPTURED — see the header note
+  pack.bytes       304455680
+  extract.sha256   4d03b6cba283744756c57ff661c2c6cbfe34fcf8ff513a966576cf7d97e91a99
+  extract.modified Fri, 30 Oct 2026 23:09:26 GMT
+  extract.fetched  2026-11-04
 
 [es]
   status           REBUILT for v4 — builder 1f61855 (#258)
@@ -340,8 +350,7 @@
   extract.modified Fri, 30 Oct 2026 23:19:26 GMT
   extract.fetched  2026-11-04
 
-[totals 18 of 19 languages — en PENDING]
-  entries          4464812
-  asset.bytes      160151760
-  lemma 1069960 · phrase 91961 · form 3292744 · abbr 10147
-  note             English is not included in these totals yet.
+[totals 19 of 19 languages]
+  entries          5712728
+  asset.bytes      200700090
+  lemma 1563976 · phrase 234051 · form 3883253 · abbr 31448
