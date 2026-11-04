@@ -9,6 +9,109 @@ files in the git tree).
 
 ---
 
+## v3 changelog — 2026-11-04
+
+**v3 rebuilds THREE languages — `zh`, `ja`, `ko` — and nothing else.** The
+other sixteen assets are the v2 artifacts unchanged and are **not re-attached
+to this release**; fetch them from v2, where their recorded `asset.sha256`
+still identifies them. `packs.sha256` v3 carries all nineteen blocks so the
+dataset has one provenance record, and marks each carried block
+`unchanged from v2`.
+
+### Han single-character words were being dropped as non-words
+
+English Wiktionary files Chinese single characters under **`pos=character`**.
+Klip's entry classifier dropped that part-of-speech wholesale, so 水 (water),
+人 (person), 犬 (dog) and 大 (big) were absent from `zh` while compounds
+containing them were present. The same rule was silently removing **kanji**
+from `ja` and **hanja** from `ko`.
+
+A `pos=character` entry is now a **`lemma`** when its headword is **entirely
+Han script** and it carries **at least one gloss**. Everything else stays
+dropped.
+
+```
+rescued (entries moved dropped -> lemma, read from the published files)
+
+              rescued   Han glyph-only   non-Han glossed   non-Han glyph
+  zh           21,153            8,156               384             392
+  ja            5,585            8,986               266             170
+  ko            4,044            6,118               133               5
+  da (control)       0                0                17               0
+```
+
+`lemma` counts: **`zh` 138,501 → 159,654 · `ja` 78,451 → 84,036 ·
+`ko` 34,016 → 38,060.** Nothing else moved — `phrase`, `form` and `abbr` are
+identical to v2 in all three languages, and the whole delta is
+`dropped → lemma`. The three extracts' `sha256` were **re-verified against
+v2's manifest before the build**, so the deltas are attributable to the
+classifier and to nothing in the source.
+
+### The gate is SCRIPT, not language
+
+The rule asks what script the headword is written in, never what language the
+pack is. A language gate would have been easier and wrong in both directions:
+it would have admitted the **384 non-Han glossed** `zh` rows (Latin, Greek and
+Cyrillic letters filed under `pos=character`), and it would have needed
+re-opening for every further Han-script language.
+
+Danish is the control. `da` has **17** `pos=character` entries — letter
+entries like `A` — and **all 17 stay dropped**, which is the result a
+language gate could not have produced while also admitting 水.
+
+Han is tested across **CJK Unified Ideographs** (`U+4E00`–`U+9FFF`),
+**Extension A** (`U+3400`–`U+4DBF`), **Extension B** (`U+20000`–`U+2A6DF`) and
+**Compatibility Ideographs** (`U+F900`–`U+FAFF`). Braille (`U+2800`–`U+28FF`)
+headwords stay dropped, as in v2.
+
+**`pos` is kept as `character`.** The pack records what an entry *is* and
+stays language-agnostic; a learner-facing label ("single-character word" for
+`zh`, "kanji" for `ja`, "hanja" for `ko`) is the consumer's business. Rewriting
+the `pos` to `noun` would bake one reading into the data and lose the fact
+that the entry is a character.
+
+### Two things a consumer should know
+
+- **16 of the 30,782 rescued entries have multi-character headwords** — 8 in
+  `zh` (望乞, 搭配詞, 螴蜳 …) and 8 in `ko` (陽光, 弱點, 無間地獄 …). They are
+  genuine words that English Wiktionary happens to file under
+  `pos=character`, and the rule admits them because it tests *entirely Han*,
+  not *exactly one character*. They are correct as lemmas, but a surface that
+  labels every `pos=character` row "single-character word" will misdescribe
+  these 16. **Label by measuring the headword's length, not by trusting the
+  `pos`.**
+- **Surface policy, recorded here because it is not in the data.** Klip will
+  include `zh` character-lemmas in its vocabulary-discovery pool (they are
+  words) and **exclude** `ja`/`ko` character-lemmas from it, while keeping all
+  three searchable and browsable — kanji and hanja meanings are reference
+  material rather than vocabulary cards. **Nothing in this dataset encodes
+  that**; it is a consumer-side decision, deferred in Klip to the branch that
+  ships the pack, and it is stated here only so the distinction is not
+  mistaken for a property of the data.
+
+### A correction to the figures this change was first reported with
+
+The rescue was first measured at **`zh` 16,031 · `ja` 5,560 · `ko` 3,731**.
+Those numbers are **distinct headwords**, not entries, because the measuring
+script accumulated headwords into a set. kaikki carries several entries per
+headword (one per etymology), and the classifier classifies entries — so the
+entry counts are the **21,153 · 5,585 · 4,044** above, confirmed three ways:
+the builder's own class line, a re-scan of the extract applying the
+classifier's exact predicate, and a tally of the published assets. The
+headword figures are not wrong as headword figures; they were reported under
+the wrong unit. Recorded rather than quietly replaced, per this repo's
+founding rule.
+
+### Carried forward unchanged
+
+The `zh` build continues to report that **no template-artifact form rows were
+skipped**, which is unexpected for a kaikki extract. This is **not new in
+v3**: `zh`'s form-side numbers are identical to v2's (`form` 1,851, 1,787
+form-class entries without a pointer row), so the condition predates this
+release and the Han rescue did not touch it. It is noted, not fixed.
+
+---
+
 ## v2 changelog — 2026-11-04
 
 **v2 replaces v1 wholesale. Two of v1's stated caveats were WRONG, and both
@@ -115,8 +218,8 @@ from a build log.
 | `fr` | French | 391,326 | 71,069 | 16,048 | 303,141 | 1,068 | 7,797,453 |
 | `hi` | Hindi | 35,877 | 19,516 | 1,797 | 14,541 | 23 | 2,938,848 |
 | `it` | Italian | 601,352 | 131,820 | 9,025 | 459,177 | 1,330 | 11,338,464 |
-| `ja` | Japanese | 84,832 | 78,451 | 908 | 3,488 | 1,985 | 7,818,930 |
-| `ko` | Korean | 48,514 | 34,016 | 898 | 13,217 | 383 | 3,671,235 |
+| `ja` | Japanese | 90,417 | 84,036 | 908 | 3,488 | 1,985 | 7,945,161 |
+| `ko` | Korean | 52,558 | 38,060 | 898 | 13,217 | 383 | 3,809,319 |
 | `nl` | Dutch | 131,705 | 53,720 | 3,126 | 74,103 | 756 | 4,143,472 |
 | `no` | Norwegian Bokmål | 79,433 | 21,644 | 526 | 57,142 | 121 | 1,760,393 |
 | `pl` | Polish | 165,934 | 65,345 | 7,856 | 92,317 | 416 | 12,337,234 |
@@ -124,8 +227,8 @@ from a build log.
 | `ru` | Russian | 436,278 | 47,697 | 3,511 | 384,617 | 453 | 18,045,714 |
 | `sv` | Swedish | 307,847 | 52,796 | 3,309 | 251,194 | 548 | 5,631,411 |
 | `tr` | Turkish | 40,251 | 18,405 | 4,072 | 17,567 | 207 | 15,487,674 |
-| `zh` | Chinese (Han-keyed) | 152,377 | 138,501 | 10,612 | 1,851 | 1,413 | 6,775,856 |
-| | **19 languages** | **5,681,946** | **1,525,239** | **233,686** | **3,887,722** | **35,299** | **199,558,280** |
+| `zh` | Chinese (Han-keyed) | 173,530 | 159,654 | 10,612 | 1,851 | 1,413 | 7,676,956 |
+| | **19 languages** | **5,712,728** | **1,556,021** | **233,686** | **3,887,722** | **35,299** | **200,723,695** |
 
 **English is the largest by a wide margin** — a 534 MB compressed extract that
 decompresses to 3.2 GiB and yields **1,247,916 entries**, more than a quarter

@@ -1,26 +1,56 @@
-# klip-dictionary-data v2 — provenance manifest
+# klip-dictionary-data v3 — provenance manifest
 #
-# Every number here is measured, not carried over. One block per language.
+# Every number in a REBUILT block is measured, not carried over. One block per
+# language.
 #
-# BUILDER      Klip commit 09a912748412d2b09681390a7103b21150974a8a (develop,
-#              the #256 merge), tool/dict_pack/build_pack.dart
+# v3 REBUILDS THREE LANGUAGES ONLY: zh, ja, ko. The Han single-character
+# rescue (Klip PR #257) changed the entry classifier, and it can only move
+# rows in a Han-script language. The other SIXTEEN blocks are CARRIED OVER
+# FROM v2 VERBATIM -- every measured field is the v2 figure, byte for byte,
+# because those assets are the v2 artifacts unchanged and were not rebuilt.
+# Each such block says so on its `status` line, which is the ONLY line added
+# to it.
+#
+# THE SIXTEEN CARRIED ASSETS ARE NOT ATTACHED TO THIS RELEASE. v3 attaches
+# FIVE files: the three rebuilt .jsonl.gz, export_pack.py, and this manifest.
+# To obtain any of the other sixteen, fetch it from the v2 release -- the
+# asset.sha256 recorded in its block below is the hash of THAT file, and is
+# how you confirm you have the right one. A block in this manifest is a
+# PROVENANCE RECORD for the dataset, not a claim that the file sits in this
+# release's asset list.
+#
+# BUILDER      Klip commit cb49b835d38567f8a8d3ffd284f414041e6ad513 (develop,
+#              the #257 merge), tool/dict_pack/build_pack.dart
+#              -- applies to the THREE REBUILT BLOCKS.
+#              The sixteen carried blocks were built at
+#              09a912748412d2b09681390a7103b21150974a8a (the #256 merge),
+#              which is what their numbers measure. A block's builder is the
+#              commit named on its own status line, never this one by default.
 # EXPORTER     export_pack.py in this repo, python3 -I, stdlib only.
 #              A column-to-key dump of the pack. No filtering, no reshaping.
+#              UNCHANGED from v2 and re-attached byte-identical.
 # CHAIN        kaikki extract -> Dart pack (.sqlite) -> gzipped JSONL asset
 #              Each link is hashed below so any link can be re-verified.
+#
+# THE THREE EXTRACTS WERE RE-VERIFIED BEFORE THE v3 BUILD, not assumed: each
+# extract.sha256 below was recomputed from the file in ~/dict-work/ and
+# matched the value v2 recorded. The inputs are therefore pinned across both
+# releases, so the entry-count deltas are attributable to the classifier
+# change alone and to nothing in the source.
 #
 # WHY THE EXTRACT HASH IS HERE AND WAS NOT IN v1: kaikki.org serves a ROLLING
 # dump with no versioned archive. v1 recorded no extract hash, so v1's numbers
 # are not reproducible -- the gender fix's removal count came out 2,806 against
 # one snapshot and 2,828 against another, a gap that can no longer be closed.
-# v2 pins every input.
+# v2 pins every input, and v3 re-verified those pins.
 #
 # THE PACKS ARE INTERMEDIATES AND WERE DELETED AFTER EXPORT. They are not
 # published. Each is reproducible from the extract hashed below plus the
-# builder commit above, and its hash is recorded here so a rebuild can be
-# checked against what actually produced these assets.
+# builder commit for that block, and its hash is recorded here so a rebuild
+# can be checked against what actually produced these assets.
 #
 [ar]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_ar.jsonl.gz
   asset.sha256     811e83b57ca5e001b627a528f9476f540d333558f751971dc41d55075f8c8870
   asset.bytes      15987204
@@ -34,6 +64,7 @@
   extract.fetched  2026-11-04
 
 [da]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_da.jsonl.gz
   asset.sha256     ab5315586c5811192d7edb306d11a747326c5542a9da0e42afcb6505b67572e0
   asset.bytes      1550579
@@ -47,6 +78,7 @@
   extract.fetched  2026-11-04
 
 [de]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_de.jsonl.gz
   asset.sha256     85fcda3a0375f26bc0d6783ecd0281b6995a69d668057074025c7b0e4c641414
   asset.bytes      15465744
@@ -60,6 +92,7 @@
   extract.fetched  2026-11-04
 
 [el]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_el.jsonl.gz
   asset.sha256     9fbd54c619ee62caafd00c947ec19998c267c5c6e2e6eaab065605394f24a663
   asset.bytes      3998224
@@ -73,6 +106,7 @@
   extract.fetched  2026-11-04
 
 [en]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_en.jsonl.gz
   asset.sha256     aab89f20511043d75d6dcef245be1c292d48608fd2328ac3a7b98982272d9c5d
   asset.bytes      40552607
@@ -86,6 +120,7 @@
   extract.fetched  2026-11-04
 
 [es]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_es.jsonl.gz
   asset.sha256     12d84982dc68693a1be2a96048f8ef23f894db36d3e3fdd850f74f86de824c48
   asset.bytes      15792654
@@ -99,6 +134,7 @@
   extract.fetched  2026-11-04
 
 [fr]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_fr.jsonl.gz
   asset.sha256     9950d6a02962d006e56bff236820c9e9704dfa27c254f994a564c33bf83f7b61
   asset.bytes      7797453
@@ -112,6 +148,7 @@
   extract.fetched  2026-11-04
 
 [hi]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_hi.jsonl.gz
   asset.sha256     cd616f76c32794a18e465f69a6a22111569714a1196f1b245601a25deea47e41
   asset.bytes      2938848
@@ -125,6 +162,7 @@
   extract.fetched  2026-11-04
 
 [it]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_it.jsonl.gz
   asset.sha256     7aaaebdc5fc20782b17abf261babcec0150d4d5cf8a8e4c33c4832a0bb4b189a
   asset.bytes      11338464
@@ -138,32 +176,35 @@
   extract.fetched  2026-11-04
 
 [ja]
+  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
   asset            klip_dictionary_ja.jsonl.gz
-  asset.sha256     b0bbcb8e4a54a6994023535e7afb49282283e420d9d98066cbdff3eb3fe4356d
-  asset.bytes      7818930
-  entries          84832   (lemma 78451 · phrase 908 · form 3488 · abbr 1985)
-  builder.classes  lemma=78451 · phrase=908 · form=3488 · abbr=1985 · dropped=115198
+  asset.sha256     28cc1659bddb05ecebdea54b7c0aab3cc0e13631c3daa8a6da16a6d200bc406c
+  asset.bytes      7945161
+  entries          90417   (lemma 84036 · phrase 908 · form 3488 · abbr 1985)
+  builder.classes  lemma=84036 · phrase=908 · form=3488 · abbr=1985 · dropped=109613
   pack             klip-dict-ja.sqlite (intermediate, deleted)
-  pack.sha256      753a3217e3e11238bd84488035eb7b1bdf797fc3981958453f2542c98af68287
-  pack.bytes       76812288
+  pack.sha256      7cdc96030b0075532e74c8ce631d146129dfc77556f2e652b1c9bb70a3cd2397
+  pack.bytes       77893632
   extract.sha256   1e0b1e48498e5af6665bad258c5b713b824ff6cc8f6b7d8d9e33c2ad89838158
   extract.modified Fri, 30 Oct 2026 23:06:36 GMT
   extract.fetched  2026-11-04
 
 [ko]
+  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
   asset            klip_dictionary_ko.jsonl.gz
-  asset.sha256     cb1ee7de5e389b9389624fb32f5e42c48e5534f215800e823ff5b82462a2ba82
-  asset.bytes      3671235
-  entries          48514   (lemma 34016 · phrase 898 · form 13217 · abbr 383)
-  builder.classes  lemma=34016 · phrase=898 · form=13217 · abbr=383 · dropped=15943
+  asset.sha256     e3d103e6bad9d8821be0764c1748cf1476e150e0b061cdb2770d1ab4d7ed7206
+  asset.bytes      3809319
+  entries          52558   (lemma 38060 · phrase 898 · form 13217 · abbr 383)
+  builder.classes  lemma=38060 · phrase=898 · form=13217 · abbr=383 · dropped=11899
   pack             klip-dict-ko.sqlite (intermediate, deleted)
-  pack.sha256      d8c0c92ce087bfa390696272f9ceba5dc1f6e8982ae14dc8e5cc2b5a7828fc21
-  pack.bytes       41652224
+  pack.sha256      f4f61659835a2cd9f577e02f90bab237f96232542085c447e02432c37d54b2d5
+  pack.bytes       42688512
   extract.sha256   2bf0aeac466458f2621e0ecfdd72b7b5b00a90c0e775443d55d369d6dab5ea83
   extract.modified Fri, 30 Oct 2026 23:11:48 GMT
   extract.fetched  2026-11-04
 
 [nl]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_nl.jsonl.gz
   asset.sha256     de98d9cc5f33faf3d86ff9a544abdcb564c51dc64d1105738101c69ad26a8e7c
   asset.bytes      4143472
@@ -177,6 +218,7 @@
   extract.fetched  2026-11-04
 
 [no]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_no.jsonl.gz
   asset.sha256     7fa0a1e303344978c887652ba21dd48232a3db6e3fdf6edd1102593e89adec9a
   asset.bytes      1760393
@@ -190,6 +232,7 @@
   extract.fetched  2026-11-04
 
 [pl]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_pl.jsonl.gz
   asset.sha256     822979fad0ed2ccb8f2266772393358509a10f5fba08e88a12b092e3191a3b2f
   asset.bytes      12337234
@@ -203,6 +246,7 @@
   extract.fetched  2026-11-04
 
 [pt]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_pt.jsonl.gz
   asset.sha256     01964912733e44e3299e82485a1910e8d4ecbbdaa629b4d2e04cbf278fb7aff1
   asset.bytes      8464584
@@ -216,6 +260,7 @@
   extract.fetched  2026-11-04
 
 [ru]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_ru.jsonl.gz
   asset.sha256     74255e6f17a4b85bdd7cf2d08e1eab1df5551e22e13e6855d8d46bb642e0d1ec
   asset.bytes      18045714
@@ -229,6 +274,7 @@
   extract.fetched  2026-11-04
 
 [sv]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_sv.jsonl.gz
   asset.sha256     67af3aa2d88d89e2f064d338c8f238bb043f3c51aa1b532b7949b97e9857f80e
   asset.bytes      5631411
@@ -242,6 +288,7 @@
   extract.fetched  2026-11-04
 
 [tr]
+  status           unchanged from v2 — not rebuilt; builder 09a9127
   asset            klip_dictionary_tr.jsonl.gz
   asset.sha256     5a949c4febeed7c1a65d3132e20e3f36a973d24fbeb75a3bf8ac09a90bf67718
   asset.bytes      15487674
@@ -255,19 +302,26 @@
   extract.fetched  2026-11-04
 
 [zh]
+  status           REBUILT for v3 — builder cb49b83 (#257, Han rescue)
   asset            klip_dictionary_zh.jsonl.gz
-  asset.sha256     7881e7e4507ac20517ba373d772d96b120cb7e214803e11aa5ffc3dd23cf3005
-  asset.bytes      6775856
-  entries          152377   (lemma 138501 · phrase 10612 · form 1851 · abbr 1413)
-  builder.classes  lemma=138501 · phrase=10612 · form=1851 · abbr=1413 · dropped=176542
+  asset.sha256     cb67ddc84fa32136fcefd2b8f389d59a554e6ca4f94361a56134a7f93d1865f5
+  asset.bytes      7676956
+  entries          173530   (lemma 159654 · phrase 10612 · form 1851 · abbr 1413)
+  builder.classes  lemma=159654 · phrase=10612 · form=1851 · abbr=1413 · dropped=155389
   pack             klip-dict-zh.sqlite (intermediate, deleted)
-  pack.sha256      09cee7efaa48ed0aaad1dc59bb15ef021971350ab9f014f58ce9d55777049944
-  pack.bytes       36859904
+  pack.sha256      bd17ba421ed712f5de56340588e27f0078e404ee64947ab705b475717d411aef
+  pack.bytes       42106880
   extract.sha256   9663c01322014cea417fbe4812cc073ca2d6a6998946edb244bf4f26853819c9
   extract.modified Fri, 30 Oct 2026 23:19:26 GMT
   extract.fetched  2026-11-04
 
-[totals 19 languages]
-  entries          5681946
-  asset.bytes      199558280
-  lemma 1525239 · phrase 233686 · form 3887722 · abbr 35299
+[totals 19 languages — THE WHOLE DATASET, spanning v2 and v3; not this release's five attachments]
+  entries          5712728
+  asset.bytes      200723695
+  lemma 1556021 · phrase 233686 · form 3887722 · abbr 35299
+  note             entries and lemma are v2's totals plus the three rebuilt
+                   deltas (zh +21153 · ja +5585 · ko +4044 = +30782, all of
+                   it dropped->lemma). phrase, form and abbr are UNCHANGED in
+                   all three rebuilds, so their totals are v2's exactly.
+                   asset.bytes was re-measured by summing the 19 published
+                   files (200723695) and agrees with the arithmetic.
