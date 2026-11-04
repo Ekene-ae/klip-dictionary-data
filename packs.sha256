@@ -15,13 +15,18 @@
 # one snapshot and 2,828 against another, a gap that can no longer be closed.
 # v2 pins every input.
 #
+# THE PACKS ARE INTERMEDIATES AND WERE DELETED AFTER EXPORT. They are not
+# published. Each is reproducible from the extract hashed below plus the
+# builder commit above, and its hash is recorded here so a rebuild can be
+# checked against what actually produced these assets.
+#
 [ar]
   asset            klip_dictionary_ar.jsonl.gz
   asset.sha256     811e83b57ca5e001b627a528f9476f540d333558f751971dc41d55075f8c8870
   asset.bytes      15987204
   entries          229902   (lemma 19933 · phrase 1329 · form 208561 · abbr 79)
   builder.classes  lemma=19933 · phrase=1329 · form=208561 · abbr=79 · dropped=3515
-  pack             klip-dict-ar.sqlite (intermediate, not published)
+  pack             klip-dict-ar.sqlite (intermediate, deleted)
   pack.sha256      1ccbc7a69f1f162afafb54e680183d786b5d787734b9201339ab12a647bb6e7f
   pack.bytes       336973824
   extract.sha256   b833fc5017d51a7ef1edf428272067b112281d9a79150d1f2ac7646b178065a3
@@ -34,7 +39,7 @@
   asset.bytes      1550579
   entries          55906   (lemma 22296 · phrase 1232 · form 32186 · abbr 192)
   builder.classes  lemma=22296 · phrase=1232 · form=32186 · abbr=192 · dropped=2780
-  pack             klip-dict-da.sqlite (intermediate, not published)
+  pack             klip-dict-da.sqlite (intermediate, deleted)
   pack.sha256      d1132231c86be3aecbd6bca2ee1c45a60230cf0bf7abaa7562182f261a840736
   pack.bytes       18464768
   extract.sha256   0fed75cbc101a9a1fb7879c4f737d0d993fb7a26073a2ccc10cc951a1e604f1d
@@ -47,7 +52,7 @@
   asset.bytes      15465744
   entries          356465   (lemma 79747 · phrase 3600 · form 271501 · abbr 1617)
   builder.classes  lemma=79747 · phrase=3600 · form=271501 · abbr=1617 · dropped=15328
-  pack             klip-dict-de.sqlite (intermediate, not published)
+  pack             klip-dict-de.sqlite (intermediate, deleted)
   pack.sha256      3e593287f63c32ff6b4ac64aa07fde9101d1f04105dbf34280ce85e6666b72e8
   pack.bytes       295387136
   extract.sha256   e16ea346863a1d0bc9e0533f83015b3847ec8b0a065ad2620b76a19bb005b520
@@ -60,11 +65,24 @@
   asset.bytes      3998224
   entries          81303   (lemma 25468 · phrase 1242 · form 54259 · abbr 334)
   builder.classes  lemma=25468 · phrase=1242 · form=54259 · abbr=334 · dropped=4122
-  pack             klip-dict-el.sqlite (intermediate, not published)
+  pack             klip-dict-el.sqlite (intermediate, deleted)
   pack.sha256      ca4202acb5d9fe1c0b82c98391bf2b5ea59b886c3a7a2f3e7ac5e0f0d4f48ace
   pack.bytes       57442304
   extract.sha256   cbf73c15005e143c496dc46c155a593e8d59880ef2059761d26e89fe2f96ff25
   extract.modified Fri, 30 Oct 2026 23:26:05 GMT
+  extract.fetched  2026-11-04
+
+[en]
+  asset            klip_dictionary_en.jsonl.gz
+  asset.sha256     aab89f20511043d75d6dcef245be1c292d48608fd2328ac3a7b98982272d9c5d
+  asset.bytes      40552607
+  entries          1247916   (lemma 491614 · phrase 141785 · form 592069 · abbr 22448)
+  builder.classes  lemma=491614 · phrase=141785 · form=592069 · abbr=22448 · dropped=251245
+  pack             klip-dict-en.sqlite (intermediate, deleted)
+  pack.sha256      566b944f0603142f8b2f250911936f104d9da3b37d9a028c60affbb160311107
+  pack.bytes       304508928
+  extract.sha256   4d03b6cba283744756c57ff661c2c6cbfe34fcf8ff513a966576cf7d97e91a99
+  extract.modified Fri, 30 Oct 2026 23:09:26 GMT
   extract.fetched  2026-11-04
 
 [es]
@@ -73,7 +91,7 @@
   asset.bytes      15792654
   entries          801725   (lemma 91933 · phrase 15474 · form 693484 · abbr 834)
   builder.classes  lemma=91933 · phrase=15474 · form=693484 · abbr=834 · dropped=12412
-  pack             klip-dict-es.sqlite (intermediate, not published)
+  pack             klip-dict-es.sqlite (intermediate, deleted)
   pack.sha256      79073198f987ca2ec4a867eadc3851b4e0192a428b3abe34808b526fa2ff8954
   pack.bytes       306622464
   extract.sha256   b25cd18584e510c516e4c9afac42a87e5acfd6bc1a13ea96a94057899521a427
@@ -86,7 +104,7 @@
   asset.bytes      7797453
   entries          391326   (lemma 71069 · phrase 16048 · form 303141 · abbr 1068)
   builder.classes  lemma=71069 · phrase=16048 · form=303141 · abbr=1068 · dropped=12801
-  pack             klip-dict-fr.sqlite (intermediate, not published)
+  pack             klip-dict-fr.sqlite (intermediate, deleted)
   pack.sha256      e18e5d6b35c51b49dc1bbe3971b7f439d080ae7a05d46f4b7043746b46654c57
   pack.bytes       130633728
   extract.sha256   224fce45865bad43c4f43f11d0f6fc84e044ffda8407c549609639cfc7d38cc7
@@ -99,7 +117,7 @@
   asset.bytes      2938848
   entries          35877   (lemma 19516 · phrase 1797 · form 14541 · abbr 23)
   builder.classes  lemma=19516 · phrase=1797 · form=14541 · abbr=23 · dropped=3636
-  pack             klip-dict-hi.sqlite (intermediate, not published)
+  pack             klip-dict-hi.sqlite (intermediate, deleted)
   pack.sha256      5307ef75aa17f9a5dd3ef56dddc5eed4cebce3c5ae231b3bfc02dd073f85f84a
   pack.bytes       51691520
   extract.sha256   e60b373dbec502cbbd916e286b6156f582bb5cab85e279d8f0c09a763331e0e7
@@ -112,7 +130,7 @@
   asset.bytes      11338464
   entries          601352   (lemma 131820 · phrase 9025 · form 459177 · abbr 1330)
   builder.classes  lemma=131820 · phrase=9025 · form=459177 · abbr=1330 · dropped=22770
-  pack             klip-dict-it.sqlite (intermediate, not published)
+  pack             klip-dict-it.sqlite (intermediate, deleted)
   pack.sha256      f2d499c95033c346e0d68419befc87847c2336b60e62223b55bcaa316183d29b
   pack.bytes       194478080
   extract.sha256   edfb787898b80c6ed20db5601741c8d42ad6f59c1c618e396ab34c702a448b63
@@ -125,7 +143,7 @@
   asset.bytes      7818930
   entries          84832   (lemma 78451 · phrase 908 · form 3488 · abbr 1985)
   builder.classes  lemma=78451 · phrase=908 · form=3488 · abbr=1985 · dropped=115198
-  pack             klip-dict-ja.sqlite (intermediate, not published)
+  pack             klip-dict-ja.sqlite (intermediate, deleted)
   pack.sha256      753a3217e3e11238bd84488035eb7b1bdf797fc3981958453f2542c98af68287
   pack.bytes       76812288
   extract.sha256   1e0b1e48498e5af6665bad258c5b713b824ff6cc8f6b7d8d9e33c2ad89838158
@@ -138,7 +156,7 @@
   asset.bytes      3671235
   entries          48514   (lemma 34016 · phrase 898 · form 13217 · abbr 383)
   builder.classes  lemma=34016 · phrase=898 · form=13217 · abbr=383 · dropped=15943
-  pack             klip-dict-ko.sqlite (intermediate, not published)
+  pack             klip-dict-ko.sqlite (intermediate, deleted)
   pack.sha256      d8c0c92ce087bfa390696272f9ceba5dc1f6e8982ae14dc8e5cc2b5a7828fc21
   pack.bytes       41652224
   extract.sha256   2bf0aeac466458f2621e0ecfdd72b7b5b00a90c0e775443d55d369d6dab5ea83
@@ -151,7 +169,7 @@
   asset.bytes      4143472
   entries          131705   (lemma 53720 · phrase 3126 · form 74103 · abbr 756)
   builder.classes  lemma=53720 · phrase=3126 · form=74103 · abbr=756 · dropped=15085
-  pack             klip-dict-nl.sqlite (intermediate, not published)
+  pack             klip-dict-nl.sqlite (intermediate, deleted)
   pack.sha256      37d04d980582159d10d6afbd37348a6458b507dca49725044716bea29e285d1d
   pack.bytes       46030848
   extract.sha256   17499b37f390857aa36aa59cff7370d09158db15b3c09ee2dc9e8d7790c4eb4d
@@ -164,7 +182,7 @@
   asset.bytes      1760393
   entries          79433   (lemma 21644 · phrase 526 · form 57142 · abbr 121)
   builder.classes  lemma=21644 · phrase=526 · form=57142 · abbr=121 · dropped=2215
-  pack             klip-dict-no.sqlite (intermediate, not published)
+  pack             klip-dict-no.sqlite (intermediate, deleted)
   pack.sha256      f86b3ec17094d37c0bbdcbf68d948363891abad7f772fb5c049a336664e16524
   pack.bytes       20819968
   extract.sha256   11e269eb3678b84f87ccdefbfc93844078fcd1ec3429d3aaea147fd2420e664f
@@ -177,7 +195,7 @@
   asset.bytes      12337234
   entries          165934   (lemma 65345 · phrase 7856 · form 92317 · abbr 416)
   builder.classes  lemma=65345 · phrase=7856 · form=92317 · abbr=416 · dropped=34242
-  pack             klip-dict-pl.sqlite (intermediate, not published)
+  pack             klip-dict-pl.sqlite (intermediate, deleted)
   pack.sha256      f72c995f4f82e1bf4daa9627ba58187cf4146a35ba83bd3374dec2193543754a
   pack.bytes       165158912
   extract.sha256   c620e7fc1fe4287720cbb72939e5fa0e4cd95797c1719a5c480b16de5d959bd0
@@ -190,7 +208,7 @@
   asset.bytes      8464584
   entries          433003   (lemma 61268 · phrase 7336 · form 363307 · abbr 1092)
   builder.classes  lemma=61268 · phrase=7336 · form=363307 · abbr=1092 · dropped=14025
-  pack             klip-dict-pt.sqlite (intermediate, not published)
+  pack             klip-dict-pt.sqlite (intermediate, deleted)
   pack.sha256      7bd5fc4a3e869b839f99ea133213eaaeb82c33c5976261f8770272607d9c875b
   pack.bytes       138723328
   extract.sha256   0db87ddd508032c4e986fe818826801c9b167b2ee4f8315763166f0fa4014480
@@ -203,7 +221,7 @@
   asset.bytes      18045714
   entries          436278   (lemma 47697 · phrase 3511 · form 384617 · abbr 453)
   builder.classes  lemma=47697 · phrase=3511 · form=384617 · abbr=453 · dropped=6982
-  pack             klip-dict-ru.sqlite (intermediate, not published)
+  pack             klip-dict-ru.sqlite (intermediate, deleted)
   pack.sha256      669e43c2edbddecd7ea83d9c63f19ee9e8ef3d6f93cffc4b50d3e791066334e6
   pack.bytes       307363840
   extract.sha256   86a781a5685d614efd439e326eed0bf0ad9cda9f67b854f8b6c93212c5345b3e
@@ -216,7 +234,7 @@
   asset.bytes      5631411
   entries          307847   (lemma 52796 · phrase 3309 · form 251194 · abbr 548)
   builder.classes  lemma=52796 · phrase=3309 · form=251194 · abbr=548 · dropped=5975
-  pack             klip-dict-sv.sqlite (intermediate, not published)
+  pack             klip-dict-sv.sqlite (intermediate, deleted)
   pack.sha256      072786b4de82f5614597e7666dd460e5925885ed6a8a2188f211e00affb364cd
   pack.bytes       90935296
   extract.sha256   b9c5b0f7dfe4f4895582449c5970c0efaa232f9861f5fe3527012555a234ae91
@@ -229,7 +247,7 @@
   asset.bytes      15487674
   entries          40251   (lemma 18405 · phrase 4072 · form 17567 · abbr 207)
   builder.classes  lemma=18405 · phrase=4072 · form=17567 · abbr=207 · dropped=6003
-  pack             klip-dict-tr.sqlite (intermediate, not published)
+  pack             klip-dict-tr.sqlite (intermediate, deleted)
   pack.sha256      bd541967b49f99df56592cfb8ffe56319fe7e73e4651e3f288bffb858495e6d2
   pack.bytes       273620992
   extract.sha256   ccaa8909f6f6ad3403d5891cbbd94799b56c67176d18967502f20baa29a6cb32
@@ -242,14 +260,14 @@
   asset.bytes      6775856
   entries          152377   (lemma 138501 · phrase 10612 · form 1851 · abbr 1413)
   builder.classes  lemma=138501 · phrase=10612 · form=1851 · abbr=1413 · dropped=176542
-  pack             klip-dict-zh.sqlite (intermediate, not published)
+  pack             klip-dict-zh.sqlite (intermediate, deleted)
   pack.sha256      09cee7efaa48ed0aaad1dc59bb15ef021971350ab9f014f58ce9d55777049944
   pack.bytes       36859904
   extract.sha256   9663c01322014cea417fbe4812cc073ca2d6a6998946edb244bf4f26853819c9
   extract.modified Fri, 30 Oct 2026 23:19:26 GMT
   extract.fetched  2026-11-04
 
-[totals 18 languages]
-  entries          4434030
-  asset.bytes      159005673
-  lemma 1033625 · phrase 91901 · form 3295653 · abbr 12851
+[totals 19 languages]
+  entries          5681946
+  asset.bytes      199558280
+  lemma 1525239 · phrase 233686 · form 3887722 · abbr 35299

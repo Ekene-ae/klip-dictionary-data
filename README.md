@@ -110,6 +110,7 @@ from a build log.
 | `da` | Danish | 55,906 | 22,296 | 1,232 | 32,186 | 192 | 1,550,579 |
 | `de` | German | 356,465 | 79,747 | 3,600 | 271,501 | 1,617 | 15,465,744 |
 | `el` | Greek | 81,303 | 25,468 | 1,242 | 54,259 | 334 | 3,998,224 |
+| `en` | English | 1,247,916 | 491,614 | 141,785 | 592,069 | 22,448 | 40,552,607 |
 | `es` | Spanish | 801,725 | 91,933 | 15,474 | 693,484 | 834 | 15,792,654 |
 | `fr` | French | 391,326 | 71,069 | 16,048 | 303,141 | 1,068 | 7,797,453 |
 | `hi` | Hindi | 35,877 | 19,516 | 1,797 | 14,541 | 23 | 2,938,848 |
@@ -124,11 +125,18 @@ from a build log.
 | `sv` | Swedish | 307,847 | 52,796 | 3,309 | 251,194 | 548 | 5,631,411 |
 | `tr` | Turkish | 40,251 | 18,405 | 4,072 | 17,567 | 207 | 15,487,674 |
 | `zh` | Chinese (Han-keyed) | 152,377 | 138,501 | 10,612 | 1,851 | 1,413 | 6,775,856 |
-| | **18 published** | **4,434,030** | **1,033,625** | **91,901** | **3,295,653** | **12,851** | **159,005,673** |
+| | **19 languages** | **5,681,946** | **1,525,239** | **233,686** | **3,887,722** | **35,299** | **199,558,280** |
 
-**English (`en`) is published as a 19th asset on this same release.** It is the
-long pole — a 534 MB compressed extract, ~4.5 GB decompressed — so it is built
-last and added when it finishes. Its row is appended here once it lands.
+**English is the largest by a wide margin** — a 534 MB compressed extract that
+decompresses to 3.2 GiB and yields **1,247,916 entries**, more than a quarter
+of everything here. It was built last and alone so the other 18 could ship
+first.
+
+Note English's shape differs from the rest: its `phrase` count (141,785) is
+larger than any other language's and its `form` count is proportionally much
+smaller, because English Wiktionary's English entries carry idioms and
+multi-word expressions densely and inflection tables sparsely. A high entry
+count here is not a high inflection count.
 
 ---
 
@@ -192,7 +200,7 @@ column-to-key dump: no filtering, no reshaping, no recomputation. Entries are
 emitted in the pack's own row order. It self-checks on every file — the object
 count must equal the pack's `meta.entry_count`, and the per-class counts must
 equal the Dart builder's own `classes` line — and **exits non-zero** if either
-disagrees. All 18 files passed.
+disagrees. All 19 files passed.
 
 **Inputs are pinned.** [`packs.sha256`](packs.sha256) carries, per language:
 the asset's sha256 and byte size, the intermediate pack's sha256 and byte size,
