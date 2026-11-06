@@ -390,6 +390,69 @@ count here is not a high inflection count.
 
 ---
 
+## Packs — what the app actually downloads
+
+From **v5** this repository publishes the **`.sqlite` packs themselves**, not
+only the gzipped JSONL exports.
+
+```
+klip_dictionary_<code>.jsonl.gz    the EXPORT — a line-per-entry dump, for
+                                   anyone who wants the data in a readable
+                                   form. Published for all 19 languages.
+
+klip-dict-<code>.sqlite            the PACK — the artifact the Klip app opens
+                                   read-only at runtime. Published for every
+                                   language whose pack is <= 60 MiB.
+```
+
+**A pack is a prebuilt SQLite database**, not a database dump: `entry`,
+`sense`, `form` and `meta` tables with their indices already created. It is
+opened **read-only** and never written to.
+
+**The format version is `pack_format 2`, recorded in the pack's own `meta`
+table.** A consumer reads the format from the pack, never from the filename —
+a filename is not a contract.
+
+### The app verifies against `packs.sha256`
+
+The Klip app downloads a pack and checks its **SHA-256 against the
+`pack.sha256` field in `packs.sha256`** before installing it. A pack that
+does not match is discarded and the previously installed pack is left
+untouched.
+
+**Every one of the 19 blocks carries a real `pack.sha256` and `pack.bytes`,
+including the languages whose pack is not attached** — so a held pack's
+identity is auditable, and a future release that attaches it can be checked
+against the figure published here.
+
+### Why some packs are not attached
+
+Owner ruling, 2026-11-06: attach every pack **≤ 60 MiB**; hold the rest until
+a form-table dedupe on the folded key is measured and ruled on.
+
+```
+ATTACHED (7)   da 17.6   no 19.9   zh 40.1   ko 40.7
+               nl 43.9   hi 49.3   el 54.8        MiB
+
+HELD (12)      ja 74.3   sv 86.7   fr 124.6  pt 132.3  pl 157.5
+               it 185.5  tr 260.9  de 281.7  en 290.4  es 292.4
+               ru 293.0  ar 321.4                      MiB
+```
+
+Each held block states its size, its hash, and what the measured dedupe
+would save. **No held pack crosses the 60 MiB line even after the dedupe**,
+so the attached set is stable for now rather than provisional.
+
+### Why the pack is not built on the device
+
+Rejected deliberately. Building it on the phone would move the whole
+classifier — entry classes, the Han single-character rule, the primary-sense
+rule, the fold, the Arabic template parse — into the app, so a **classifier
+fix would need an app release instead of a data release.** The pack is a
+build artifact and is published as one.
+
+---
+
 ## Record format
 
 One JSON object per line. No wrapping array, so a consumer can stream it.
