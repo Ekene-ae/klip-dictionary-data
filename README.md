@@ -425,23 +425,51 @@ including the languages whose pack is not attached** — so a held pack's
 identity is auditable, and a future release that attaches it can be checked
 against the figure published here.
 
-### Why some packs are not attached
+### All nineteen packs are attached — the 60 MiB line is a Wi-Fi gate
 
-Owner ruling, 2026-11-06: attach every pack **≤ 60 MiB**; hold the rest until
-a form-table dedupe on the folded key is measured and ruled on.
+From **v6**, every language's pack is published. The 60 MiB figure is **not a
+shipping threshold**; it is the point at which the app shows the download's
+size before starting it.
 
 ```
-ATTACHED (7)   da 17.6   no 19.9   zh 40.1   ko 40.7
-               nl 43.9   hi 49.3   el 54.8        MiB
+NO EXTRA CONFIRM (<= 60 MiB)   da 17.4  no 18.9  ko 37.9  zh 39.5
+                               nl 43.3  hi 47.9  el 52.8      MiB
 
-HELD (12)      ja 74.3   sv 86.7   fr 124.6  pt 132.3  pl 157.5
-               it 185.5  tr 260.9  de 281.7  en 290.4  es 292.4
-               ru 293.0  ar 321.4                      MiB
+SIZE SHOWN IN CONFIRM          ja  68.4  sv  86.0  fr 111.5  pt 126.5
+                               pl 153.8  it 179.6  tr 259.7  ru 260.5
+                               de 270.4  es 270.9  en 285.8  ar 199.5  MiB
 ```
 
-Each held block states its size, its hash, and what the measured dedupe
-would save. **No held pack crosses the 60 MiB line even after the dedupe**,
-so the attached set is stable for now rather than provisional.
+Every download defaults to Wi-Fi regardless of size.
+
+### v6 collapsed the form table
+
+The form table was where the bytes were: Turkish carried 2,817,353 form rows
+for 40,251 entries, Arabic 3,067,177 for 229,902 — its conjugation tables are
+exhaustive *and* every vocalisation variant of one written form folds to the
+same key.
+
+v6 collapses that table on **(fold, target)**:
+
+- **The key includes the target**, so two spellings that fold alike but point
+  at different lemmas keep two rows. No lemma pointer can be lost — that is a
+  property of the key, not of the data.
+- **Tag sets are merged**, never one chosen arbitrarily: a tag set is a
+  grammatical reading.
+- **The first spelling in source order is kept**, and a new `collapsed`
+  column records how many rows merged, so the loss is visible rather than
+  silent. The form index matches on the fold, so a lookup never needed the
+  discarded spellings.
+
+Arabic gained the most: **3,067,177 → 1,745,804 rows, 321.4 → 199.5 MiB.**
+Turkish the least, at −1.8% of rows.
+
+**`pack_format` is still 2.** `collapsed` is additive and no query reads it,
+so a v6 pack opens unchanged in a build that predates it.
+
+**The JSONL exports were regenerated too.** `export_pack.py` reads the form
+table for its `f` and `t` fields, so a v5 export published beside a v6 pack
+would have been two artifacts that disagree.
 
 ### Why the pack is not built on the device
 

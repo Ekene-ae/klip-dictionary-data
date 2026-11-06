@@ -1,389 +1,388 @@
-# klip-dictionary-data v5 — provenance manifest
+# klip-dictionary-data v6 — provenance manifest
 #
 # Every number here is measured, not carried over. One block per language.
 #
-# **v5 ADDS THE PACKS THEMSELVES.** v1-v4 published only the gzipped JSONL
-# exports and recorded each `.sqlite` pack as an intermediate that was
-# deleted. v5 publishes the PACK for every language small enough to ship, and
-# records `pack.sha256` and `pack.bytes` for ALL NINETEEN — including the ones
-# held back. **EVERY `pack.sha256` FIELD BELOW CARRIES A REAL DIGEST**; none
-# is unrecorded, which was v4's regression.
+# **ALL NINETEEN PACKS ARE ATTACHED.** v5 held twelve back above a 60 MiB
+# line. That line is now a **Wi-Fi GATE, NOT A SHIPPING GATE** (owner ruling
+# 2026-11-06): every pack publishes, every download defaults to Wi-Fi, and a
+# pack over 60 MiB additionally shows its size in the app's confirm step
+# before anything starts. Nothing under 60 MiB needs the extra confirm.
 #
-# WHY: the Klip app downloads a finished pack at runtime and verifies it
-# against this manifest. Building the pack on the device was rejected — it
-# would move the whole classifier (D6 classes, the Han rule, the
-# primary-sense rule, `dictFold`, the Arabic expansion parse) into the app,
-# so a classifier fix would need an app release instead of a data release.
+#   NO EXTRA CONFIRM (<=60 MiB)  da el hi ko nl no zh
+#   SIZE SHOWN IN CONFIRM        ar de en es fr it ja pl pt ru sv tr
 #
-# BUILDER      Klip commit 3fe49f16549d623c09235725c8790ff28dabf04d (develop)
+# BUILDER      Klip commit 337889669ca0ce079e2c4fba869afea866b36fd6
 #              tool/dict_pack/build_pack.dart
 # EXPORTER     export_pack.py in this repo, python3 -I, stdlib only.
-# CHAIN        kaikki extract -> Dart pack (.sqlite) -> gzipped JSONL asset
-#              The PACK is now a published artifact, not only an intermediate.
 #
-# ── WHICH PACKS ARE ATTACHED, AND WHY THE OTHERS ARE NOT ─────────────────
+# ── WHAT CHANGED IN THE PACKS: THE FORM TABLE COLLAPSED ──────────────────
 #
-# Owner ruling 2026-11-06: publish every pack <= 60 MiB; hold the rest until
-# the folded-key form dedupe is measured and ruled on. Every held pack's
-# size and hash are recorded below so the decision is auditable, and the
-# reason is on its own `status` line.
+# The form table is where the bytes were. Turkish carried 2,817,353 form rows
+# for 40,251 entries; Spanish 1,882,928; English 1,371,024; Arabic 3,067,177
+# for 229,902 entries, because its conjugation tables are exhaustive AND every
+# vocalisation variant of one written form folds to the same key.
 #
-#   ATTACHED (7)  da el hi ko nl no zh
-#   HELD    (12)  ar de en es fr it ja pl pt ru sv tr
+# v6 collapses the form table on **(fold, target)**:
 #
-# **THE PACK FORMAT IS `pack_format 2`**, recorded in each pack's own `meta`
-# table. A consumer reads the format from the pack, never from a filename.
+#   KEY        fold + target. Two spellings that fold alike but point at
+#              DIFFERENT lemmas keep TWO rows, so no lemma pointer can be
+#              lost. That is a property of the key, not of the data.
+#   TAGS       the UNION is kept across collapsed rows, never one chosen
+#              arbitrarily — a tag set is a grammatical reading.
+#   SPELLING   the FIRST IN SOURCE ORDER is kept, and the new `collapsed`
+#              column records how many rows merged, so the loss is visible.
+#              Acceptable because the form index matches on the FOLD: a
+#              lookup never needed the discarded spellings to succeed.
 #
-# ── ALL NINETEEN EXTRACTS WERE RE-VERIFIED BEFORE THIS BUILD ─────────────
+# **`pack_format` IS STILL 2, AND THAT WAS CHECKED RATHER THAN ASSUMED.**
+# `collapsed` is additive and no query reads it; the app's form queries name
+# their columns, so a v6 pack opens unchanged in a build that predates it.
+# Bumping would have made every v6 pack unopenable until an app release
+# caught up — the data/app coupling that publishing finished packs exists to
+# avoid.
 #
-# Each extract.sha256 below was recomputed and matched the value v4 recorded.
-# The packs came out BYTE-FOR-BYTE THE SAME SIZE as v4's, which is the
-# expected result: `tool/dict_pack` is unchanged between v4's builder and
-# this one (the only diff is a new `bench.dart`, which `build_pack.dart` does
-# not use). The sizes were CONFIRMED against v4, not assumed from it.
+# ── EVERY EXTRACT RE-VERIFIED; EVERY PACK HASHED BEFORE ANY DELETION ─────
 #
-# ── EVERY PACK WAS HASHED BEFORE ANYTHING WAS DELETED ────────────────────
-#
-# v4's regression was deleting each intermediate before hashing it, which is
-# why its `pack.sha256` was unrecorded. This build hashes the pack as soon
-# as it exists, then measures it, and only then deletes the oversized ones.
+# All 19 extract.sha256 were recomputed and matched the value v4 recorded.
+# Each pack was hashed as soon as it existed. `pack.sha256` carries a real
+# digest for all nineteen; none is unrecorded.
 #
 
 [ar]
-  status           PACK HELD — 321.4 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 191.7 MiB (-40.4%, rows -43.1%); still above the line.
   asset            klip_dictionary_ar.jsonl.gz
-  asset.sha256     31f95af9ac8f112899e8b30937a0b472352477886e2d9db1fd2d01207041fd21
-  asset.bytes      15986648
+  asset.sha256     e5896127cdd44b2293e25aef39559938eb992b468b47588b97f4f77f3ea10574
+  asset.bytes      10788114
   entries          229902   (lemma 20051 · phrase 1332 · form 208482 · abbr 37)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=20051 · phrase=1332 · form=208482 · abbr=37 · dropped=3515
-  pack             klip-dict-ar.sqlite (NOT ATTACHED — see status)
-  pack.sha256      4cf1029cc36f18c3f0fe41692d6a62b3287e2ed24d9b34f55e2a43b12df77ab0
-  pack.bytes       336965632
+  pack             klip-dict-ar.sqlite
+  pack.sha256      53d0ad6e431454c1f6576fca2906abef30ec1746f3a70742931439f46fc8f215
+  pack.bytes       209149952
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 3067177 -> 1745804 (-43.1%) · bytes 336965632 -> 209149952 (-37.9%) · tag unions 243267
   extract.sha256   b833fc5017d51a7ef1edf428272067b112281d9a79150d1f2ac7646b178065a3
   extract.modified Fri, 30 Oct 2026 23:38:58 GMT
   extract.fetched  2026-11-04
 
 [da]
-  status           PACK ATTACHED — 17.6 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_da.jsonl.gz
-  asset.sha256     50937aa50280d3d3e9703f5945e57b0cc76f48c09d994fa30212dbefd6275495
-  asset.bytes      1550482
+  asset.sha256     c475a8bf6ed55884a8c09677360bda25659d8548b635355f0f684994c17d8cd4
+  asset.bytes      1528455
   entries          55906   (lemma 22332 · phrase 1232 · form 32158 · abbr 184)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=22332 · phrase=1232 · form=32158 · abbr=184 · dropped=2780
   pack             klip-dict-da.sqlite
-  pack.sha256      ecf0068bcbad61cded6307b9b32b05fac1d8d4109c2e038d0da6bf5c6d534ffe
-  pack.bytes       18464768
+  pack.sha256      aab33f71c0105df94598d51523e68d991b519cc8e575b7d3e979ae46577780bc
+  pack.bytes       18231296
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 146402 -> 139009 (-5.0%) · bytes 18464768 -> 18231296 (-1.3%) · tag unions 3729
   extract.sha256   0fed75cbc101a9a1fb7879c4f737d0d993fb7a26073a2ccc10cc951a1e604f1d
   extract.modified Fri, 30 Oct 2026 23:15:10 GMT
   extract.fetched  2026-11-04
 
 [de]
-  status           PACK HELD — 281.7 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 267.6 MiB (-5.0%, rows -8.1%); still above the line.
   asset            klip_dictionary_de.jsonl.gz
-  asset.sha256     1a11c6858318b927cfb72a7551c6f9f4bc988e10c8a8874d2f177286d340c1e1
-  asset.bytes      15464140
+  asset.sha256     b649cdf1fd7b6e271482d9026c6dfa7095f833994cfe2bc7d6364de5f16a9703
+  asset.bytes      14853957
   entries          356465   (lemma 80046 · phrase 3604 · form 271386 · abbr 1429)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=80046 · phrase=3604 · form=271386 · abbr=1429 · dropped=15328
-  pack             klip-dict-de.sqlite (NOT ATTACHED — see status)
-  pack.sha256      69e5b5da2f9892c69d540cac90fd4e65ae2a9e0e0c260a0ddedd5a35fa556557
-  pack.bytes       295378944
+  pack             klip-dict-de.sqlite
+  pack.sha256      ba3262ffb303b0048088a844cb743d74225f662402769fdc0c029126893f2bc2
+  pack.bytes       283574272
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 1644666 -> 1511974 (-8.1%) · bytes 295378944 -> 283574272 (-4.0%) · tag unions 65274
   extract.sha256   e16ea346863a1d0bc9e0533f83015b3847ec8b0a065ad2620b76a19bb005b520
   extract.modified Fri, 30 Oct 2026 23:14:06 GMT
   extract.fetched  2026-11-04
 
 [el]
-  status           PACK ATTACHED — 54.8 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_el.jsonl.gz
-  asset.sha256     42fd1085c93402e46e2b307f3705a739af35b799cbbce24cdf8ec0189a188842
-  asset.bytes      3997999
+  asset.sha256     ba80c54ccce9e2e54c59193e62167282336ab1b551d905d1268e8868d0db6b7a
+  asset.bytes      3859225
   entries          81303   (lemma 25692 · phrase 1244 · form 54051 · abbr 316)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=25692 · phrase=1244 · form=54051 · abbr=316 · dropped=4122
   pack             klip-dict-el.sqlite
-  pack.sha256      46290cae983db7d2ca89dedf9cd70eba53c266fc3b6b258df027046c7a6e5e3a
-  pack.bytes       57434112
+  pack.sha256      95952e5da0c772ca1daec7ac546f1824743de43a1ae218b63316350d247b6daf
+  pack.bytes       55398400
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 399900 -> 370482 (-7.4%) · bytes 57434112 -> 55398400 (-3.5%) · tag unions 9311
   extract.sha256   cbf73c15005e143c496dc46c155a593e8d59880ef2059761d26e89fe2f96ff25
   extract.modified Fri, 30 Oct 2026 23:26:05 GMT
   extract.fetched  2026-11-04
 
 [en]
-  status           PACK HELD — 290.4 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 283.7 MiB (-2.3%, rows -9.5%); still above the line.
   asset            klip_dictionary_en.jsonl.gz
-  asset.sha256     ab03a7e610161ef978dcbce715ca797b0291333432f12f4f2b36e7a1f8676cf0
-  asset.bytes      40548330
+  asset.sha256     6108d6f32026a0f1213288a9d20e913abd7c6d844c0c9b01fa5812f44b49d861
+  asset.bytes      40375438
   entries          1247916   (lemma 494016 · phrase 142090 · form 590509 · abbr 21301)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=494016 · phrase=142090 · form=590509 · abbr=21301 · dropped=251245
-  pack             klip-dict-en.sqlite (NOT ATTACHED — see status)
-  pack.sha256      b92eb2e615582f7473fa4283fa8064c51ce9dd542f10c5d377e1f39d6b663e4f
-  pack.bytes       304455680
+  pack             klip-dict-en.sqlite
+  pack.sha256      f055e9a1fc3c99d45d15db376972b611f9e002e84c98a69be98196680a0a4249
+  pack.bytes       299655168
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 1371024 -> 1240520 (-9.5%) · bytes 304455680 -> 299655168 (-1.6%) · tag unions 68996
   extract.sha256   4d03b6cba283744756c57ff661c2c6cbfe34fcf8ff513a966576cf7d97e91a99
   extract.modified Fri, 30 Oct 2026 23:09:26 GMT
   extract.fetched  2026-11-04
 
 [es]
-  status           PACK HELD — 292.4 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 266.3 MiB (-8.9%, rows -16.0%); still above the line.
   asset            klip_dictionary_es.jsonl.gz
-  asset.sha256     b5fa1d7e3eec19ed11ed1695e62cab76b1e6637359b5e639de5a32225afd4852
-  asset.bytes      15791252
+  asset.sha256     118db9101692b655660a778477cf14f0691a8c8a6c2715241374acf295c8a5a9
+  asset.bytes      14801253
   entries          801725   (lemma 92268 · phrase 15488 · form 693260 · abbr 709)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=92268 · phrase=15488 · form=693260 · abbr=709 · dropped=12412
-  pack             klip-dict-es.sqlite (NOT ATTACHED — see status)
-  pack.sha256      8ffd1f4a513cf7ed40ef9e1233423cf59a36fda345f1f11b336d844163ce2bf2
-  pack.bytes       306610176
+  pack             klip-dict-es.sqlite
+  pack.sha256      39802bb2fd59a7b34d77626851643c8453ecb88b7e772e37cba74ae55349734b
+  pack.bytes       284033024
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 1882928 -> 1582389 (-16.0%) · bytes 306610176 -> 284033024 (-7.4%) · tag unions 177750
   extract.sha256   b25cd18584e510c516e4c9afac42a87e5acfd6bc1a13ea96a94057899521a427
   extract.modified Fri, 30 Oct 2026 23:17:42 GMT
   extract.fetched  2026-11-04
 
 [fr]
-  status           PACK HELD — 124.6 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 109.9 MiB (-11.8%, rows -16.6%); still above the line.
   asset            klip_dictionary_fr.jsonl.gz
-  asset.sha256     afd3bbab21b2e8f0f86f8d9a2f6016d196129813ff34c7ef35ed4ee2acc1da1e
-  asset.bytes      7796897
+  asset.sha256     dc481ef4beec08f045628b927878decd4d770142d2c503e455be9625c4eb09c2
+  asset.bytes      7468125
   entries          391326   (lemma 71201 · phrase 16058 · form 303089 · abbr 978)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=71201 · phrase=16058 · form=303089 · abbr=978 · dropped=12801
-  pack             klip-dict-fr.sqlite (NOT ATTACHED — see status)
-  pack.sha256      dc81a21a82713ab9611de3598a211c7c8328612ab1e8eaa18a7e5e45f44771da
-  pack.bytes       130633728
+  pack             klip-dict-fr.sqlite
+  pack.sha256      7e105fe83c8c7a412ba97c1c61feb949449ff9995e0da271efac75b8f8ad4fda
+  pack.bytes       116879360
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 761012 -> 634897 (-16.6%) · bytes 130633728 -> 116879360 (-10.5%) · tag unions 21364
   extract.sha256   224fce45865bad43c4f43f11d0f6fc84e044ffda8407c549609639cfc7d38cc7
   extract.modified Fri, 30 Oct 2026 23:28:52 GMT
   extract.fetched  2026-11-04
 
 [hi]
-  status           PACK ATTACHED — 49.3 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_hi.jsonl.gz
-  asset.sha256     2545789cef0b9a2eb9c062aec13aa424803da38b30489839f80d6a2d883320e3
-  asset.bytes      2938786
+  asset.sha256     e09c9b4b255ce00ed64e193b9779f18fc174b5dad052baef64d62f0f47056058
+  asset.bytes      2759517
   entries          35877   (lemma 19533 · phrase 1797 · form 14527 · abbr 20)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=19533 · phrase=1797 · form=14527 · abbr=20 · dropped=3636
   pack             klip-dict-hi.sqlite
-  pack.sha256      6320387cfebe72d17c51eca9b563c52375b3df13bd8f49d00c883ad6385bd655
-  pack.bytes       51691520
+  pack.sha256      4afee6076b07ccf2861cac79a9fb92c8d65b3b9fe63a8976109789e6780ec772
+  pack.bytes       50249728
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 338662 -> 310654 (-8.3%) · bytes 51691520 -> 50249728 (-2.8%) · tag unions 2161
   extract.sha256   e60b373dbec502cbbd916e286b6156f582bb5cab85e279d8f0c09a763331e0e7
   extract.modified Fri, 30 Oct 2026 22:54:39 GMT
   extract.fetched  2026-11-04
 
 [it]
-  status           PACK HELD — 185.5 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 177.7 MiB (-4.2%, rows -9.1%); still above the line.
   asset            klip_dictionary_it.jsonl.gz
-  asset.sha256     9fd345e4d7cbac3b26ea6b70d72f58764ae4c832ec24396f0ad94b7b7970f104
-  asset.bytes      11339017
+  asset.sha256     f2506b062dbb311e85db36f0fefa612b04e405c4745309b9701eabab07e9bf5f
+  asset.bytes      11086178
   entries          601352   (lemma 132044 · phrase 9032 · form 459856 · abbr 420)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=132044 · phrase=9032 · form=459856 · abbr=420 · dropped=22770
-  pack             klip-dict-it.sqlite (NOT ATTACHED — see status)
-  pack.sha256      e3f7f55360be29cb5506f4852433a0640d53d4b7bddbebc478e96ce51471e148
-  pack.bytes       194519040
+  pack             klip-dict-it.sqlite
+  pack.sha256      ea5da6157c480a3e83cfc28eaba0d2c74ea2a1095c6ab6a3ccacdfcc693fb019
+  pack.bytes       188289024
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 1206735 -> 1096397 (-9.1%) · bytes 194519040 -> 188289024 (-3.2%) · tag unions 30660
   extract.sha256   edfb787898b80c6ed20db5601741c8d42ad6f59c1c618e396ab34c702a448b63
   extract.modified Fri, 30 Oct 2026 22:55:12 GMT
   extract.fetched  2026-11-04
 
 [ja]
-  status           PACK HELD — 74.3 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 67.4 MiB (-9.3%, rows -12.9%); still above the line.
   asset            klip_dictionary_ja.jsonl.gz
-  asset.sha256     078c05d33e830794bae767944dcc8b3dcaa2e959dd3fdfe4a51dba38963f887d
-  asset.bytes      7943213
+  asset.sha256     87b852e373de76417d3f30e15625973a5f359a0a2124b97984419390cde2bd4a
+  asset.bytes      7330925
   entries          90417   (lemma 84706 · phrase 908 · form 3420 · abbr 1383)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=84706 · phrase=908 · form=3420 · abbr=1383 · dropped=109613
-  pack             klip-dict-ja.sqlite (NOT ATTACHED — see status)
-  pack.sha256      9710acb5a98040b1e230fda82c7ed6833ee4522339fe3a16dde749c38f3148ae
-  pack.bytes       77889536
+  pack             klip-dict-ja.sqlite
+  pack.sha256      35be449edf2f6c96734638b7f1436390fd0cc5a7fa321811f86c275d37236f62
+  pack.bytes       71700480
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 887525 -> 773018 (-12.9%) · bytes 77889536 -> 71700480 (-7.9%) · tag unions 14024
   extract.sha256   1e0b1e48498e5af6665bad258c5b713b824ff6cc8f6b7d8d9e33c2ad89838158
   extract.modified Fri, 30 Oct 2026 23:06:36 GMT
   extract.fetched  2026-11-04
 
 [ko]
-  status           PACK ATTACHED — 40.7 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_ko.jsonl.gz
-  asset.sha256     8ca40d53ead999118c7ef01a17a2c43ad009d25f7c928ce8f8828896b897f0df
-  asset.bytes      3809015
+  asset.sha256     752f71b6840f8e15b00d47c54c20f7e36b1dd8865d37983b8bf99e3db75e4d92
+  asset.bytes      3645441
   entries          52558   (lemma 38147 · phrase 898 · form 13195 · abbr 318)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=38147 · phrase=898 · form=13195 · abbr=318 · dropped=11899
   pack             klip-dict-ko.sqlite
-  pack.sha256      b97535f2a4e952cddfe93cb286ab98bb8b762683a87535d1340e0efe30a6afcf
-  pack.bytes       42688512
+  pack.sha256      f4adfb7eeeabf7dc94627a51bcb57024533885af4297e62d1481385da226caf2
+  pack.bytes       39780352
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 456860 -> 404947 (-11.4%) · bytes 42688512 -> 39780352 (-6.8%) · tag unions 2074
   extract.sha256   2bf0aeac466458f2621e0ecfdd72b7b5b00a90c0e775443d55d369d6dab5ea83
   extract.modified Fri, 30 Oct 2026 23:11:48 GMT
   extract.fetched  2026-11-04
 
 [nl]
-  status           PACK ATTACHED — 43.9 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_nl.jsonl.gz
-  asset.sha256     ff8b8de50cb40f431e371c14981a3e212041f95b9dfcf7d65e64cd0aa0a08f17
-  asset.bytes      4143201
+  asset.sha256     cd31341dd97c90442773ea2ceb0f211a62822444cd651572a0dcf7b99edea535
+  asset.bytes      4106704
   entries          131705   (lemma 53863 · phrase 3127 · form 73994 · abbr 721)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=53863 · phrase=3127 · form=73994 · abbr=721 · dropped=15085
   pack             klip-dict-nl.sqlite
-  pack.sha256      f08e99b3ac136858bf68d45985f853956c93738b22a79113146340bbb4f9ba3f
-  pack.bytes       46022656
+  pack.sha256      f0b07655aafca8382d03889639d63159af3ffe3f228d41d003266cebf8352a5b
+  pack.bytes       45383680
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 267891 -> 254890 (-4.9%) · bytes 46022656 -> 45383680 (-1.4%) · tag unions 3962
   extract.sha256   17499b37f390857aa36aa59cff7370d09158db15b3c09ee2dc9e8d7790c4eb4d
   extract.modified Fri, 30 Oct 2026 23:04:32 GMT
   extract.fetched  2026-11-04
 
 [no]
-  status           PACK ATTACHED — 19.9 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_no.jsonl.gz
-  asset.sha256     89c85c08b1b6f08696d777e09dc340aa837ef4eced840ab6a661a58af67a89a6
-  asset.bytes      1760258
+  asset.sha256     caec9d803a351aa869063b503def565309936cf93676aaf5839e55acb57c3d52
+  asset.bytes      1677479
   entries          79433   (lemma 21686 · phrase 528 · form 57116 · abbr 103)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=21686 · phrase=528 · form=57116 · abbr=103 · dropped=2215
   pack             klip-dict-no.sqlite
-  pack.sha256      da6cd0f2fd216771243f16cd308a5a4380b0a085fe45d41d499c68426a08519e
-  pack.bytes       20819968
+  pack.sha256      b73a1b1c46d052061f761058ee179e76e1bf145fb78fcd9e274d9b2d47b6b340
+  pack.bytes       19771392
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 146941 -> 121787 (-17.1%) · bytes 20819968 -> 19771392 (-5.0%) · tag unions 15663
   extract.sha256   11e269eb3678b84f87ccdefbfc93844078fcd1ec3429d3aaea147fd2420e664f
   extract.modified Fri, 30 Oct 2026 23:32:57 GMT
   extract.fetched  2026-11-04
 
 [pl]
-  status           PACK HELD — 157.5 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 151.7 MiB (-3.7%, rows -5.1%); still above the line.
   asset            klip_dictionary_pl.jsonl.gz
-  asset.sha256     038650480d12f5c289230c75d6b9649789fe6a2eccd13900becce2f23cab27cc
-  asset.bytes      12336543
+  asset.sha256     972b1e959a46f18f91db085b9eb2dc471d7fdf6a550db3e21414ba42bf21c963
+  asset.bytes      12512739
   entries          165934   (lemma 65503 · phrase 7859 · form 92189 · abbr 383)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=65503 · phrase=7859 · form=92189 · abbr=383 · dropped=34242
-  pack             klip-dict-pl.sqlite (NOT ATTACHED — see status)
-  pack.sha256      3585b13e2932c71854b2d893e3b3e2058f1f53d9667e2c31bdb12d393f39f904
-  pack.bytes       165158912
+  pack             klip-dict-pl.sqlite
+  pack.sha256      eb7d1dc770f80c46e940ed7324953d75e3ea41dfe462a8be271aaec5bd43b9ea
+  pack.bytes       161234944
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 1651295 -> 1566787 (-5.1%) · bytes 165158912 -> 161234944 (-2.4%) · tag unions 34521
   extract.sha256   c620e7fc1fe4287720cbb72939e5fa0e4cd95797c1719a5c480b16de5d959bd0
   extract.modified Fri, 30 Oct 2026 23:38:49 GMT
   extract.fetched  2026-11-04
 
 [pt]
-  status           PACK HELD — 132.3 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 125.4 MiB (-5.2%, rows -12.7%); still above the line.
   asset            klip_dictionary_pt.jsonl.gz
-  asset.sha256     d7d2c5acd0155001baeab8a4bb3d14ec567bfc6fcdc9dc828a4cc5c3a3393244
-  asset.bytes      8463663
+  asset.sha256     23937b43800f69c6f79a1a9bf6bb63a1b3b5186ba78cfa7b11ff8044bc23432f
+  asset.bytes      8154574
   entries          433003   (lemma 61560 · phrase 7339 · form 363200 · abbr 904)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=61560 · phrase=7339 · form=363200 · abbr=904 · dropped=14025
-  pack             klip-dict-pt.sqlite (NOT ATTACHED — see status)
-  pack.sha256      7299980ee502752664627275b748bb2983c9b0f406119f23be36025f1c9147d8
-  pack.bytes       138723328
+  pack             klip-dict-pt.sqlite
+  pack.sha256      347ba3f87533cb4b939cff078d2c49b38ce7abd2dde5cc0fcfd2d62d4e5d503b
+  pack.bytes       132661248
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 850447 -> 742267 (-12.7%) · bytes 138723328 -> 132661248 (-4.4%) · tag unions 54038
   extract.sha256   0db87ddd508032c4e986fe818826801c9b167b2ee4f8315763166f0fa4014480
   extract.modified Fri, 30 Oct 2026 23:12:00 GMT
   extract.fetched  2026-11-04
 
 [ru]
-  status           PACK HELD — 293.0 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 250.3 MiB (-14.6%, rows -22.5%); still above the line.
   asset            klip_dictionary_ru.jsonl.gz
-  asset.sha256     9275434b2e7c3fb8fce075de15ddb0656eee2b315bf558a0e4b96d02e902a666
-  asset.bytes      18036283
+  asset.sha256     7bdfc350629b64ce1c520663f219817b8fa5ff7508e86bacf1276e664d9a06e0
+  asset.bytes      16001382
   entries          436278   (lemma 49755 · phrase 3511 · form 382597 · abbr 415)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=49755 · phrase=3511 · form=382597 · abbr=415 · dropped=6982
-  pack             klip-dict-ru.sqlite (NOT ATTACHED — see status)
-  pack.sha256      5f7d945a1ce8176e276642beed57f71510013033cb7da5f099df452c35ec3a3c
-  pack.bytes       307187712
+  pack             klip-dict-ru.sqlite
+  pack.sha256      c07b877077cd0a3c4125153780e0d7fc91f7ceff326302071f74e7c0272f5804
+  pack.bytes       273182720
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 2326243 -> 1802962 (-22.5%) · bytes 307187712 -> 273182720 (-11.1%) · tag unions 377571
   extract.sha256   86a781a5685d614efd439e326eed0bf0ad9cda9f67b854f8b6c93212c5345b3e
   extract.modified Fri, 30 Oct 2026 23:05:30 GMT
   extract.fetched  2026-11-04
 
 [sv]
-  status           PACK HELD — 86.7 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 85.3 MiB (-1.6%, rows -3.4%); still above the line.
   asset            klip_dictionary_sv.jsonl.gz
-  asset.sha256     586282aadd533cfcaed9927e8299346a7af16494f15631aedc868837028e63f7
-  asset.bytes      5630903
+  asset.sha256     57dbf0928f68f8ca6528bdf63e786f745ec7c976d446834c9767a55d486aef63
+  asset.bytes      5563133
   entries          307847   (lemma 52942 · phrase 3314 · form 251109 · abbr 482)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=52942 · phrase=3314 · form=251109 · abbr=482 · dropped=5975
-  pack             klip-dict-sv.sqlite (NOT ATTACHED — see status)
-  pack.sha256      0fbc90c96806fc063a5b0423acfdaaecf363f2a59dea0e8861e03967e9a31cf4
-  pack.bytes       90931200
+  pack             klip-dict-sv.sqlite
+  pack.sha256      ac7997fd0fd225b6173ab9ef8143466f75684b60dabd988547d6516eaf10cc6b
+  pack.bytes       90230784
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 588830 -> 568992 (-3.4%) · bytes 90931200 -> 90230784 (-0.8%) · tag unions 7942
   extract.sha256   b9c5b0f7dfe4f4895582449c5970c0efaa232f9861f5fe3527012555a234ae91
   extract.modified Fri, 30 Oct 2026 23:31:17 GMT
   extract.fetched  2026-11-04
 
 [tr]
-  status           PACK HELD — 260.9 MiB, above the 60 MiB ruling.
-                   Hash and size recorded; the file is not attached.
-                   PD3 folded-key dedupe would give 256.8 MiB (-1.6%, rows -1.8%); still above the line.
   asset            klip_dictionary_tr.jsonl.gz
-  asset.sha256     391a16c6df3702cb765d34dec65c3b5b8d4f9b2c61f83a33a455eecc7ed514c4
-  asset.bytes      15487586
+  asset.sha256     1d2a8e2d5be08e4939c34892f04dc21d1530bebd227e180fcd3b24bd7a8aefcd
+  asset.bytes      14686508
   entries          40251   (lemma 18490 · phrase 4075 · form 17534 · abbr 152)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=18490 · phrase=4075 · form=17534 · abbr=152 · dropped=6003
-  pack             klip-dict-tr.sqlite (NOT ATTACHED — see status)
-  pack.sha256      2cea15160876003e151e08aa0f6b1aff33cd5071b956589e8d7bf92c69bcfac6
-  pack.bytes       273616896
+  pack             klip-dict-tr.sqlite
+  pack.sha256      c0a36c5d1bde00a0f5ac125ecb4ff5b92e8628ca3eb1c4c274783539eaa0ebd8
+  pack.bytes       272359424
+  pack.wifi.gate   size shown in the confirm step (> 60 MiB)
+  form.dedupe      rows 2817353 -> 2767225 (-1.8%) · bytes 273616896 -> 272359424 (-0.5%) · tag unions 14264
   extract.sha256   ccaa8909f6f6ad3403d5891cbbd94799b56c67176d18967502f20baa29a6cb32
   extract.modified Fri, 30 Oct 2026 23:01:45 GMT
   extract.fetched  2026-11-04
 
 [zh]
-  status           PACK ATTACHED — 40.1 MiB, <= the 60 MiB ruling
   asset            klip_dictionary_zh.jsonl.gz
-  asset.sha256     075ca9aadcc375cba3d9ec86205c97b6c628abfd230d109d0c0fa45afdef9bac
-  asset.bytes      7675874
+  asset.sha256     bfebf2386319527ed87601a100a795537eba851b787b39225c10505f633b2898
+  asset.bytes      7645610
   entries          173530   (lemma 160141 · phrase 10615 · form 1581 · abbr 1193)
   self-check       export vs meta.entry_count: OK · builder line vs export
                    line: AGREE
   builder.classes  lemma=160141 · phrase=10615 · form=1581 · abbr=1193 · dropped=155389
   pack             klip-dict-zh.sqlite
-  pack.sha256      b5e0fb13f2de4f08e480706045e7dbd5975460026bc4c519dd24f334f8ea0caf
-  pack.bytes       42098688
+  pack.sha256      609a0a7938d584c34b98a271103c5e89b55c076888996230308ad1943ef42915
+  pack.bytes       41373696
+  pack.wifi.gate   no extra confirm (<= 60 MiB)
+  form.dedupe      rows 147549 -> 132022 (-10.5%) · bytes 42098688 -> 41373696 (-1.7%) · tag unions 2441
   extract.sha256   9663c01322014cea417fbe4812cc073ca2d6a6998946edb244bf4f26853819c9
   extract.modified Fri, 30 Oct 2026 23:19:26 GMT
   extract.fetched  2026-11-04
 
 [totals 19 languages]
   entries          5712728
-  asset.bytes      200700090
+  asset.bytes      188844757
   lemma 1563976 · phrase 234051 · form 3883253 · abbr 31448
-  packs.attached   7 of 19 (da el hi ko nl no zh)
-  packs.held       12 of 19 (ar de en es fr it ja pl pt ru sv tr)
-  note             entries, classes and asset.bytes are unchanged from v4 —
-                   the same extracts built with the same classifier. What v5
-                   adds is the PACK artifacts and a real pack.sha256 for
-                   every language, held ones included.
+  packs.attached   19 of 19
+  packs.bytes      2653138944  (v5 was 2901291008 — the form dedupe saved 8.6%)
+  note             entries and classes are unchanged from v4/v5: the same
+                   extracts, the same classifier. What v6 changes is the
+                   FORM TABLE, collapsed on (fold, target), and that every
+                   pack is now attached rather than twelve being held.
+                   **THE JSONL EXPORTS WERE REGENERATED TOO.** export_pack.py
+                   reads the form table for its `f` and `t` fields, so a v4
+                   export beside a v6 pack would have been two published
+                   artifacts that disagree. Every asset.sha256 below is a
+                   fresh digest of a fresh export from the v6 pack.
