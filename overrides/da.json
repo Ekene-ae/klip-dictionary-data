@@ -1,0 +1,7 @@
+{
+  "_comment": "Owner-approved corrections to the kaikki source, applied at pack-build time by klip's tool/dict_pack/build_pack.dart (4th argument). Each entry replaces ONE headword+pos's whole sense list. Approvals are dated in README.md's changelog. B-90, 2026-11-14.",
+  "entries": [
+    {"word": "mag", "pos": "noun", "glosses": ["ease, leisure (as in 'i ro og mag')"]},
+    {"word": "afhængig", "pos": "adj", "glosses": ["dependent", "addicted"]}
+  ]
+}

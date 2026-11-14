@@ -9,6 +9,41 @@ files in the git tree).
 
 ---
 
+## v7 changelog — UNRELEASED (data fixes approved 2026-11-14, B-90)
+
+**NOT PUBLISHED. The owner releases the pack; nothing here is on a device.**
+
+Two Danish translations were wrong in the data itself (the other two the
+owner's device round caught were the app's lookup, fixed in klip's
+dictionary_service.dart the same day):
+
+```
+mag        noun   "rest"                     -> "ease, leisure (as in 'i ro og mag')"
+                  Wiktionary's "rest" is repose; in English it reads as "remainder".
+afhængig   adj    ["addicted", "dependent"]  -> ["dependent", "addicted"]
+                  "dependent" is the main sense; the order was Wiktionary's.
+```
+
+**APPROVED BY THE OWNER 2026-11-14** ("B-90 data: APPROVED here — the
+dictionary artifact has no proposal section"). Recorded here because this
+README is the data change log.
+
+**HOW A FIX IS CARRIED — `overrides/<lang>.json`, new with v7.** The kaikki
+source is never edited. A correction is a dated, approved replacement of ONE
+entry's whole sense list, keyed by headword and pos, in `overrides/da.json`;
+klip's builder applies it at build time:
+
+```
+dart run tool/dict_pack/build_pack.dart da.jsonl klip-dict-da.sqlite da overrides/da.json
+```
+
+Replacing the whole list keeps the file readable as what the entry WILL say
+and makes a reorder the same shape as a rewording. Class and gender are still
+decided from the source's own senses. The v7 packs are built with this file;
+`packs.sha256` is regenerated at release, not before.
+
+---
+
 ## v4 changelog — 2026-11-04
 
 **v4 rebuilds ALL NINETEEN languages.** v3 rebuilt three and carried sixteen;
