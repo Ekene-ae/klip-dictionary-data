@@ -54,6 +54,29 @@ def require_key(var):
     return k
 
 
+def require_key_any(*names):
+    """The first of several accepted variable names that is set.
+
+    **THE NAME A KEY LIVES UNDER IS NOT PART OF THE CONTRACT; THE KEY IS.**
+    `deepl_ref.py` required `DEEPL_AUTH_KEY` while the environment this project
+    actually uses exports `DEEPL_API_KEY` — so the oracle would have refused to
+    run with a perfectly good key present, and the obvious workaround (export a
+    second copy under the other name) MULTIPLIES THE PLACES A SECRET LIVES,
+    which is the opposite of what this module is for.
+
+    Accepting both names costs nothing and keeps the key in ONE variable. The
+    rules are unchanged: never a flag, never logged, never in an error message
+    — the SystemExit below names the VARIABLES, never a value.
+    """
+    for n in names:
+        k = os.environ.get(n, '').strip()
+        if k:
+            return k
+    raise SystemExit(
+        'none of %s is set. Export one; it is never passed as a flag.'
+        % ', '.join(names))
+
+
 class Budget:
     """Character budget, enforced before the send."""
 
