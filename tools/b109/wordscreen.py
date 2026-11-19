@@ -51,6 +51,98 @@ def load(packpath):
     db.close()
     return folds, len(rows), bad
 
+# ── ELISION IS PER-LANGUAGE, AND THE DEFAULT IS TO LEAVE TEXT ALONE ──────
+#
+# **FOUND 2026-11-19 RUNNING B-110 FOR ITALIAN, BY READING THE FLAGS.**
+# `TOKEN` below joins words across an apostrophe. That is right for the Danish
+# this screen was written for — Danish barely uses the apostrophe — and WRONG
+# FOR THE ROMANCE LANGUAGES, where it marks an ELISION: `nell'omelia` is
+# *nella* + *omelia*, two words. Glued, the pair cannot resolve in any pack
+# and falls into "absent from all three corpora" — **a probable mishearing
+# that is ordinary Italian**.
+#
+# What it cost before it was fixed, on the Italian shortlist: every rate was
+# inflated (Penisolabella 12.89 -> 10.10 per 1,000, Update 3.30 -> 1.46) and
+# the DICTIONARY-GAP band collapsed when it was corrected (Penisolabella
+# 52 -> 1). The gap band is the tell: a glued elision the corpora happened to
+# contain was being scored as "a real word the pack lacks".
+#
+# **THE DEFAULT IS `lang=None`, WHICH SPLITS NOTHING.** Danish's published
+# B-110 figures were produced without this and must not move; a caller opts
+# in by naming its language. **English MUST NOT opt in**: `don't`, `it's` and
+# `we'll` are contractions, where the apostrophe really is word-internal, and
+# splitting them would invent the exact artefact this fixes.
+ELIDABLE = {
+    # Italian: articles, prepositions and the apocopated forms that take an
+    # apostrophe before a vowel.
+    'it': {'l', 'un', 'dell', 'nell', 'all', 'sull', 'dall', 'coll', 'quell',
+           'quest', 'quant', 'cert', 'altr', 'bell', 'sant', 'grand', 'buon',
+           'mezz', 'tutt', 'nessun', 'ogn', 'anch', 'dov', 'com', 'cos',
+           'c', 'd', 'n', 's', 'gl', 't', 'm', 'v', 'po'},
+    # French: articles, pronouns, and the conjunctions that elide before a
+    # vowel. `jusqu'`, `lorsqu'`, `puisqu'`, `quoiqu'` are one word each until
+    # the apostrophe, exactly like `qu'`.
+    'fr': {'l', 'd', 'j', 'n', 'm', 't', 's', 'c', 'qu', 'jusqu', 'lorsqu',
+           'puisqu', 'quoiqu', 'presqu', 'quelqu', 'entr'},
+    # Catalan: the article and the weak pronouns.
+    'ca': {'l', 'd', 's', 'n', 'm', 't', 'ns', 'us', 'qu'},
+    # Portuguese elides rarely and mostly in fixed phrases (`pingo d'agua`),
+    # but the two that occur are real.
+    'pt': {'d', 'n'},
+}
+
+# **ONE WORD PER LANGUAGE THAT LOOKS LIKE AN ELISION AND IS NOT.** French
+# `aujourd'hui` is a single word; splitting it yields `aujourd` and `hui`,
+# NEITHER of which resolves, so the fix would manufacture two candidates per
+# occurrence of one of the commonest words in the language.
+ELISION_EXCEPTIONS = {
+    'fr': {"aujourd'hui"},
+}
+
+_APOS = "['\u2019]"
+_elision_re = {}
+
+
+def _elision_pattern(lang):
+    if lang not in _elision_re:
+        stems = ELIDABLE.get(lang)
+        if not stems:
+            _elision_re[lang] = None
+        else:
+            alt = '|'.join(sorted((re.escape(x) for x in stems), key=len, reverse=True))
+            _elision_re[lang] = re.compile(r'\b(%s)%s' % (alt, _APOS), re.I)
+    return _elision_re[lang]
+
+
+def split_elisions(text, lang):
+    """Split Romance elisions so each side is tokenised as its own word.
+
+    `lang=None`, or a language with no rule, returns the text UNCHANGED.
+    Exceptions are protected first, so `aujourd'hui` survives whole.
+    """
+    pat = _elision_pattern(lang)
+    if pat is None:
+        return text
+    # **THE GUARD RESTORES WHAT IT MATCHED, NOT THE CANONICAL SPELLING.** An
+    # earlier cut substituted the exception's own lowercase form back in, so
+    # `Aujourd'hui` came out `aujourd'hui` — and CASE IS LOAD-BEARING here:
+    # `screen` reads a leading capital mid-sentence as a NAME. Caught by
+    # wordscreen_test.py, which is why that test exists.
+    held = []
+    for word in sorted(ELISION_EXCEPTIONS.get(lang, ())):
+        rx = re.compile(re.escape(word).replace("'", _APOS), re.I)
+
+        def _hold(m):
+            held.append(m.group(0))
+            return '\x00%d\x00' % (len(held) - 1)
+
+        text = rx.sub(_hold, text)
+    text = pat.sub(lambda m: m.group(1) + ' ', text)
+    for i, original in enumerate(held):
+        text = text.replace('\x00%d\x00' % i, original)
+    return text
+
+
 LOANWORDS = {
     'podcast','podcasts','episode','reality','summit','talk','quote','approach',
     'burger','instagram','online','mail','ok','okay','weekend','job','jobs',
@@ -58,13 +150,23 @@ LOANWORDS = {
 }
 TOKEN = re.compile(r"[^\W\d_]+(?:[-'][^\W\d_]+)*", re.UNICODE)
 
-def screen(text, folds, first_token_is_sentence_start=True):
-    res = {'tokens': 0, 'name': [], 'loan': [], 'nonword': []}
+def screen(text, folds, first_token_is_sentence_start=True, lang=None):
+    """`lang` opts into that language's elision rule. Default: no splitting,
+    so every existing caller's figures are unchanged."""
+    text = split_elisions(text, lang)
+    res = {'tokens': 0, 'name': [], 'loan': [], 'nonword': [], 'elision': []}
+    elidable = ELIDABLE.get(lang) or frozenset()
     toks = list(TOKEN.finditer(text))
     for i, m in enumerate(toks):
         w = m.group(0)
         res['tokens'] += 1
         if dict_fold(w) in folds:
+            continue
+        if w.lower() in elidable:
+            # the bare article left behind by the split. A function word, and
+            # not a candidate for anything — without this the fix would trade
+            # one artefact for another.
+            res['elision'].append(w)
             continue
         mid_sentence = i > 0 and not re.search(r'[.!?]\s*$', text[:m.start()].rstrip() or ' ')
         if w[:1].isupper() and mid_sentence:

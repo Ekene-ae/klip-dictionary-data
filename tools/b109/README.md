@@ -167,3 +167,32 @@ sqlite3 "file:<path>?mode=ro" "<query>"      # refuses to create; says "unable t
 ```bash
 tools/check_published_pack.sh da          # then run it again; believe the second
 ```
+
+
+## wordscreen's elision rule, added 2026-11-19
+
+`wordscreen.py`'s `TOKEN` joins words across an apostrophe. Right for Danish;
+**wrong for the Romance languages**, where the apostrophe marks an elision —
+`nell'omelia` is *nella* + *omelia*. Glued, the pair cannot resolve in any
+pack and lands in "probable mishearing": **an artefact that reads as a
+finding.** Found running B-110 for Italian by reading the flags.
+
+```
+split_elisions(text, lang)     lang=None splits NOTHING — the default, so
+                               B-110's published Danish figures cannot move
+screen(text, folds, lang=...)  opts in, and classes the bare article left
+                               behind as `elision` rather than as a candidate
+ELIDABLE                       it, fr, ca, pt. **en is deliberately absent:**
+                               `don't` and `it's` are contractions, where the
+                               apostrophe really is word-internal
+ELISION_EXCEPTIONS             fr `aujourd'hui` is ONE word; splitting it
+                               manufactures two candidates per occurrence of
+                               one of the commonest words in French
+```
+
+**Tests: `python3 -I wordscreen_test.py` — 31 checks.** The first group is the
+regression guard that matters most (`lang=None` changes nothing). The tests
+caught a real bug during development: the exception guard restored the
+canonical lowercase spelling, so `Aujourd'hui` came back `aujourd'hui` —
+and case is load-bearing, because `screen` reads a leading capital
+mid-sentence as a NAME.
